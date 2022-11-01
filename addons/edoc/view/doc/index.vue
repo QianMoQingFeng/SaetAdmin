@@ -41,7 +41,7 @@
     </div>
 </template>
 
-{component is="st-table"/}
+
 <script>
 console.log('Prism', Prism);
 new SaetApp({

@@ -1,0 +1,9 @@
+<script>
+    // ST = {'xxxx':'yyyy'}
+    const ST = {$vars|json_encode|raw}; 
+    const __CONFIG__ = ST.__CONFIG__;
+    // 防止编辑器格式化出错 
+    console.log(__CONFIG__);
+    // script 可以通过 ST.XXXXX使用 系统默认vue中 js部分可通过this.ST.xxxx 视图部分 ST.xxxx
+    console.info('ST', ST);
+</script>

@@ -1,0 +1,247 @@
+{component is="st-window"/}
+<script>
+
+
+    // ceeat view
+    const templatetDom = document.getElementsByTagName('template')
+    const appDom = document.getElementById('saetApp')
+    appDom.append(templatetDom[0].content.cloneNode(true))
+    appDom.innerHTML += ' <st-window> </st-window>'
+
+    if (self == top && ST.rule != 'index/index' && ST.rule != 'index/login') {
+        let headDom = document.head || document.getElementsByTagName('head')[0]
+        let style = document.createElement('style');
+        style.appendChild(document.createTextNode('body{padding:15px;}'))
+        headDom.appendChild(style)
+    }
+
+
+    /** 根地址模式
+     * false-无根地址
+     * admin-截止到admin.php/
+     * addon-截止到admin.php/more_module@admin/访问非插件url时等效于root
+     */
+    St.axios.defaults.baseUrlType = 'addon';
+    St.axios.interceptors.request.use((config) => {
+        if (config.url == '') return config;
+        if (config.baseUrlType == 'addon' && typeof (ST.apiBaseUrl) != 'undefined') {
+            config.baseURL = ST.apiBaseUrl;
+        }
+        if (config.baseUrlType == 'root' && typeof (ST.apiRootUrl) != 'undefined') {
+            config.baseURL = ST.apiRootUrl;
+        }
+        return config;
+    });
+
+    const only = (url, param) => {
+        console.log(param);
+        let i = St.string(url).contains('?');
+        if (i) { url += '&self=1' } else { url += '?self=1' }
+        if (param) {
+            for (const key in param) {
+                let value = param[key]
+                url += `&${key}=${value}`
+            }
+        }
+        return url;
+    }
+
+    if (typeof (Vue) != 'undefined') {
+        const AppNo = {
+            template: `<center style="margin-top:35vh;"></el-button><el-button type="error">{{message}}</el-button></center>`,
+            data() {
+                return {
+                    message: "你引入了Vue，快开始创作你的页面吧！",
+                };
+            },
+        };
+
+        // directives: {
+        //     drag: {
+        //         mounted(el, binding) {
+        //             console.log('自定义', el);
+        //             console.log('自定义', binding);
+        //             const options = binding.value;
+        //             for (let oi = 0; oi < options.length; oi++) {
+        //                 const o = options[oi];
+        //                 new Sortable(el.querySelector(o.selector), o.option);
+        //             }
+        //         }
+        //     }
+        // },
+
+        new SaetComponent(vuedraggable)
+
+        const app = Vue.createApp(typeof (this.SaetPage) == 'undefined' ? AppNo : this.SaetPage);
+        typeof (ElementPlus) != 'undefined' ? app.use(ElementPlus, { locale: ElementPlusLocaleZhCn }) : console.log('element-plus为必要拓展，请务必引入');
+        if (typeof (this.SaetComponentList) != 'undefined') {
+            for (const [key, component] of Object.entries(this.SaetComponentList)) {
+                if (component.name) app.component(component.name, component)
+            }
+        }
+
+        app.directive('drag', {
+            mounted(el, binding) {
+                const options = binding.value;
+                for (let oi = 0; oi < options.length; oi++) {
+                    const o = options[oi];
+                    new Sortable(el.querySelector(o.selector), o.option);
+                }
+            }
+        })
+
+        for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+            app.component(key, component)
+        }
+        // created(){
+        //     document.getElementById("saet-table").remove();
+        // },
+        for (const [key, component] of Object.entries(SaetAdminComponentVue)) {
+            app.component(key, component)
+        }
+
+        // console.log(ST.defaultMenu.id);
+
+
+        // ST.adminTheme
+        if (window.innerWidth < 991) ST.adminTheme.menu.minimize = true
+        const store = Vuex.createStore({
+            state() {
+                return {
+                    adminTheme: reactive(ST.adminTheme),
+                    W_LIST: [],
+                    mainMenuId: ST.openMenu ? ST.openMenu.id : 0,
+                    subMenuId: ST.openMenu ? ST.openMenu.id : 0,
+                    tabActiveId: 0, openTabList: []
+                }
+            },
+            mutations: {
+                setStore(state, provider) {
+                    let key = provider.key;
+                    let data = provider.data;
+                    let noStorage = provider.noStorage ? true : false;
+                    state[key] = data;
+                    if (noStorage == false) {
+                        uni.setStorageSync(key, data);
+                    } else {
+                        console.log(key, '不缓存');
+                    }
+                },
+            }
+        })
+
+        app.use(store)
+
+        app.mixin({ data() { return { ST: ST, St: St } } })
+
+        // iframe 父级 主题切换
+        window.addEventListener('message', function (e) {  // 监听 message 事件
+            htmlDom.setAttribute('class', `${e.data.theme} ${e.data.color}`)
+        });
+
+        // 单窗口主动切换
+        if (ST.adminTheme.theme == 'system') {
+            window.matchMedia('(prefers-color-scheme: dark)')
+                .addEventListener('change', event => {
+                    if (event.matches) {
+                        htmlDom.setAttribute('class', `dark ${ST.adminTheme.color}`)
+                    } else {
+                        htmlDom.setAttribute('class', `light ${ST.adminTheme.color}`)
+                    }
+                })
+        }
+
+        const windowDefault = {
+            title: 'Saet',
+            fullscreen: false,
+            visible: true,
+            draggable: true,
+            customClass: '',
+            fullscreenAnimation: true,
+            delayTime: 600,
+            loadEnd: false,
+            loadType: 'all',//full tip
+            height: '400px',
+            width: '50%',
+            top: '12vh',
+            modal: false,
+            showClose: true,
+            showMinimize: true,
+            showMaximize: true,
+            closeOnClickModal: false, closeOnPressEscape: false
+        }
+
+        const windowTool = {
+            open: (e) => {
+                e = mergeProps(windowDefault, e);
+                if (!e.id) e.id = store.state.W_LIST.length + 1
+                if (!e.top) e.top = 'calc(15vh + ' + store.state.W_LIST.length * 40 + 'px)'
+                let length = store.state.W_LIST.push(e);
+                var startTime = new Date().getTime();
+                setTimeout(() => {
+                    let iframeBox = document.getElementById('iframe-box-' + e.id);
+                    iframeBox.appendChild(iframe)
+                }, 10);
+
+                let iframe = document.createElement('iframe');
+                iframe.src = e.url;
+                iframe.width = '100%';
+                iframe.id = 'iframe-' + e.id;
+                iframe.height = e.height;
+                // html,body{background-color:unset;}
+                // iframe.scrolling = 'no';
+
+
+
+                iframe.onload = () => {
+                    //去掉内容背景色
+                    let iframeDoc = iframe.contentWindow.document;
+                    let style = document.createElement('style');
+                    style.appendChild(document.createTextNode('html,body{background-color:unset;}'))
+                    iframeDoc.head.appendChild(style)
+
+                    // // 监听高度变化
+                    // let reizeHeight = new ResizeObserver(() => {
+                    //     iframe.height = iframeBody.scrollHeight;
+                    //     if (e.height < iframeBody.scrollHeight) {
+                    //         iframe.height = iframeBody.scrollHeight;
+                    //     }
+                    // });
+                    // reizeHeight.observe(iframeBody)
+
+                    // iframe.height = iframeBody.scrollHeight;
+                    // console.log('addddd', iframeBody);
+                    // if (iframe.height > parseInt(e.height)) {
+                    //     iframe.style = "width:calc(100% - 12px);"
+                    // }
+                    let d = e.delayTime - (new Date().getTime() - startTime)
+                    if (d > 0) {
+                        setTimeout(() => {
+                            store.state.W_LIST[length - 1].loadEnd = true
+                        }, d)
+                    } else {
+                        store.state.W_LIST[length - 1].loadEnd = true
+                    }
+                }
+                console.log(store.state.W_LIST);
+            }, edit(k, e) {
+                store.state.W_LIST[k] = mergeProps(store.state.W_LIST[k], e);
+            }, close(k) {
+                store.state.W_LIST.splice(k, 1);
+            }
+        }
+
+        St.window = windowTool
+
+
+        app.mount("#saetApp");
+
+        var templates = document.getElementsByTagName('template');
+        for (let index = 0; index < templates.length; index++) {
+            const element = templates[index];
+            setTimeout(() => {
+                element.remove();
+            }, 0);
+        }
+    }
+</script>

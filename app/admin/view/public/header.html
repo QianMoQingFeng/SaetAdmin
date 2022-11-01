@@ -1,0 +1,77 @@
+<head>
+    {include file="../app/admin/view/public/assgin.html" /}
+    <script>
+
+        let THEME = ST.adminTheme.theme
+        const htmlDom = document.getElementsByTagName('html')[0]
+
+        if (ST.adminTheme.theme == 'system') {
+            THEME = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
+            htmlDom.setAttribute('class', `${THEME} ${ST.adminTheme.color}`)
+        }
+
+
+
+    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width,height=device-height,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/saet/css/common.min.css?v={:time()}">
+
+    <script src="/static/package/vue/index.min.js"></script>
+    <script src=" https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
+    <script src="/static/package/vue/component.js"></script>
+
+    <script src="/static/package/element-plus/index.min.js"></script>
+    <link rel="stylesheet" href="/static/package/element-plus/index.min.css">
+    <link rel="stylesheet" href="/static/package/remixicon/remixicon.css">
+    <script src="/static/package/axios/axios.min.js"></script>
+    <script src="/static/package/string/string.min.js"></script>
+    <script src="/static/package/element-plus/icon.js"></script>
+    <script src="/static/saet/js/common.js?v={:time()}"></script>
+    <script src="/static/package/nprogress.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
+    <script src="/static/package/draggable/vuedraggable.umd.min.js"></script>
+    <link rel="stylesheet" href="/static/package/nprogress.css">
+
+    <style>
+        * {
+            margin: 0px;
+            -webkit-text-size-adjust: none;
+        }
+
+
+
+        @keyframes twinkle {
+            0% {
+                transform: scale(.8)
+            }
+
+            50% {
+                transform: scale(1.1)
+            }
+
+            to {
+                transform: scale(1)
+            }
+        }
+
+        .el-icon svg {
+            animation: twinkle 400ms ease-in-out;
+        }
+
+        .el-icon svg,
+        .el-button:hover .el-icon {
+            animation: twinkle 400ms ease-in-out;
+        }
+
+        .el-icon.no-twinkle svg,
+        .el-button:hover .no-twinkle.el-icon {
+            animation: none;
+        }
+    </style>
+
+</head>

@@ -2,6 +2,4 @@
 /.vscode
 runtime/*
 *.log
-.gitignore
 .env
-.DS_Store

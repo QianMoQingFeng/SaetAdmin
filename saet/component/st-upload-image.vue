@@ -11,7 +11,7 @@
         :preview-src-list="previewList" preview-teleported></el-image>
 </template>
 <script>
-new SaetComponent({
+ SaetComponent({
     name: 'st-image-upload',
     template: '#st-image-upload',
     props: { modelValue: [Array, String], resType: { type: String, default: 'string' }, config: { type: Object, default: {} } },

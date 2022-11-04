@@ -10,7 +10,6 @@ class Config extends AdminBase
 {
     public function index()
     {
-
         $groupList = json_decode($this->model->where('name', 'group')->value('value'));
         $list = $this->model->order('weight asc')->select()->toArray();
         foreach ($list as $key => $value) {

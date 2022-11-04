@@ -50,27 +50,28 @@
         </el-menu>
     </el-scrollbar>
 </template>
-<script >
-new SaetComponent({
+<script type="module">
+import {store} from '/addons/admin/js/store.js';
+console.log('store',store.adminTheme);
+ SaetComponent({
     name: 'st-sub-menu',
     template: '#st-sub-menu',
     props: {
         menuList: Array
     }, setup(props, context) {
 
-        const store = Vuex.useStore();
         const subMenuList = Vue.computed(() => {
             return props.menuList.children ? props.menuList.children : [props.menuList]
         })
-        const adminTheme = reactive(store.state.adminTheme);
+        const adminTheme = reactive(store.adminTheme);
 
         const subMenuId = Vue.computed(() => {
-            return store.state.subMenuId
+            return store.subMenuId
         })
 
         function setMenu(e) {
-            store.state.subMenuId = e.id
-            store.state.mainMenuId = e.T_root_id
+            store.subMenuId = e.id
+            store.mainMenuId = e.T_root_id
             context.emit('setMenu', e)
         }
         return { setMenu, subMenuId, subMenuList, adminTheme }

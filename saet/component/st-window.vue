@@ -7,7 +7,7 @@
                     <el-tab-pane :name="e.id" v-if="!e.visible && e.minimize">
                         <template #label>
                             <span class="">
-                                <span class="st-m-r-10">{{  e.title  }}</span>
+                                <span class="st-m-r-10">{{ e.title }}</span>
                                 <saet-icon name="ri-picture-in-picture-line"></saet-icon>
                             </span>
                         </template>
@@ -24,7 +24,7 @@
                     @closed="closed(key, e)" :style="{ color: '#333', fontSize: '14px' }" @opened="opened">
                     <template #header>
                         <div class="st-flex align-center">
-                            <span class="window-title">{{  e.title  }}</span>
+                            <span class="window-title">{{ e.title }}</span>
                             <saet-icon class="is-loading" name="loading"
                                 v-if="!e.loadEnd && (e.loadType == 'tip' || e.loadType == 'all') && e.url">
                             </saet-icon>
@@ -66,28 +66,79 @@
         </template>
     </div>
 </template>
-<script>
+<script type="module">
+import { store } from '/addons/admin/js/store.js'
 
-new SaetComponent({
+const windowDefault = {
+    title: 'Saet',
+    fullscreen: false,
+    visible: true,
+    draggable: true,
+    customClass: '',
+    fullscreenAnimation: true,
+    delayTime: 600,
+    loadEnd: false,
+    loadType: 'all',//full tip
+    height: '400px',
+    width: '50%',
+    top: '12vh',
+    modal: false,
+    showClose: true,
+    showMinimize: true,
+    showMaximize: true,
+    closeOnClickModal: false, closeOnPressEscape: false
+}
+
+const windowTool = {
+    open: (e) => {
+        e = Vue.mergeProps(windowDefault, e);
+        if (!e.id) e.id = store.W_LIST.length + 1
+        if (!e.top) e.top = 'calc(15vh + ' + store.W_LIST.length * 40 + 'px)'
+        let length = store.W_LIST.push(e);
+        var startTime = new Date().getTime();
+        setTimeout(() => {
+            let iframeBox = document.getElementById('iframe-box-' + e.id);
+            iframeBox.appendChild(iframe)
+        }, 10);
+
+        let iframe = document.createElement('iframe');
+        iframe.src = e.url;
+        iframe.width = '100%';
+        iframe.id = 'iframe-' + e.id;
+        iframe.height = e.height;
+        iframe.onload = () => {
+            //去掉内容背景色
+            let iframeDoc = iframe.contentWindow.document;
+            let style = document.createElement('style');
+            style.appendChild(document.createTextNode('html,body{background-color:unset;}'))
+            iframeDoc.head.appendChild(style)
+            let d = e.delayTime - (new Date().getTime() - startTime)
+            if (d > 0) {
+                setTimeout(() => {
+                    store.W_LIST[length - 1].loadEnd = true
+                }, d)
+            } else {
+                store.W_LIST[length - 1].loadEnd = true
+            }
+        }
+    }, edit(k, e) {
+        store.W_LIST[k] = Vue.mergeProps(store.W_LIST[k], e);
+    }, close(k) {
+        store.W_LIST.splice(k, 1);
+    }
+}
+
+St.window = windowTool
+console.log(window);
+ SaetComponent({
     name: 'st-window',
     template: '#st-window',
-    created() {
-
-    },
     setup() {
-
         const assign = {};
-        const store = Vuex.useStore();
-
-        assign.list = Vue.computed(() => {
-            return store.state.W_LIST;
-        });
-
+        assign.list = ref(store.W_LIST);
         assign.changFullscreen = (k, s) => {
             St.window.edit(k, { fullscreen: !s })
         }
-
-
         assign.close = (k, is_key) => {
             if (is_key !== true) k = assign.list.value.findIndex((item) => item.id == k);
             if (assign.list.value[k].visible == false) return St.window.close(k);
@@ -109,7 +160,6 @@ new SaetComponent({
                 St.window.close(k)
             }
         }
-
         assign.dialogVisible = true
         assign.isLast = (k, e) => {
             return false
@@ -165,17 +215,11 @@ new SaetComponent({
 
 .st-window .window-title {
     margin-right: 10px;
-    color:var(--el-text-color-regular);
+    color: var(--el-text-color-regular);
 }
 
 .st-window .fixed-box .el-tabs__header {
     margin: 0;
 }
 
-/* .st-window .el-scrollbar__view{
-    height: inherit;
-}
-.st-window .el-scrollbar__view>div{
-    height: inherit; 
-}*/
 </style>

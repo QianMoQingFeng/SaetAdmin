@@ -1,6 +1,5 @@
 
     <template type="text/html" id="side-top">
-
     <div class="side-top">
         <div class="saet-top">
             <div class="tabs" style="width:100%;">
@@ -58,7 +57,7 @@
                 <div class="right">
                     <el-tooltip class="box-item" effect="dark" content="如需跟随系统，点击右侧主题按钮设置" placement="bottom"
                         :disabled="'{$adminTheme[\'theme\']}' == 'system' ? true : false">
-                        <div @click="changeTheme(relTheme == 'dark' ? 'light' : 'dark', true)" class="theme-toggler">
+                        <div @click="changeTheme(relTheme == 'dark' ? 'light' : 'dark', true,true)" class="theme-toggler">
                             <div class="switch">
                                 <div class="switch__action">
                                     <div class="switch__icon">
@@ -89,7 +88,7 @@
                     </el-button>
 
                     <el-button @click="drawer = !drawer" text circle>
-                        <img src="/static/img/theme.png" style="width: 20px;height: 20px;" alt="主题设置">
+                        <img src="/static/saet/img/theme.png" style="width: 20px;height: 20px;" alt="主题设置">
                     </el-button>
                 </div>
             </div>
@@ -133,21 +132,21 @@
                                 <div class="item st-m-l-4" :class="{ 'active': adminTheme.theme == 'system' }"
                                     @click="changeTheme('system', true)">
                                     <div class="image">
-                                        <el-image src="/static/img/system.png"></el-image>
+                                        <el-image src="/static/saet/img/system.png"></el-image>
                                     </div>
                                     <div class="desc">跟随系统</div>
                                 </div>
                                 <div class="item" :class="{ 'active': adminTheme.theme == 'dark' }"
                                     @click="changeTheme('dark', true)">
                                     <div class="image">
-                                        <el-image src="/static/img/dark.png"></el-image>
+                                        <el-image src="/static/saet/img/dark.png"></el-image>
                                     </div>
                                     <div class="desc">深色</div>
                                 </div>
                                 <div class="item" :class="{ 'active': adminTheme.theme == 'light' }"
                                     @click="changeTheme('light', true)">
                                     <div class="image">
-                                        <el-image src="/static/img/light.png"></el-image>
+                                        <el-image src="/static/saet/img/light.png"></el-image>
                                     </div>
                                     <div class="desc">浅色</div>
                                 </div>
@@ -258,27 +257,27 @@
 </template>
 
 
-<script >
+<script type="module">
 
-
-
-new SaetComponent({
+import {store} from '/addons/admin/js/store.js'
+ 
+ SaetComponent({
     name: 'title-tree',
     props: { list: Array, level: Number, idTree: Array },
     template: `<template v-for="(v, index) in list"><template v-if="idTree[level] == v.id"><el-breadcrumb-item class=""> {{  v.title  }}  </el-breadcrumb-item></template><title-tree :list="v.children" v-if="v.children" :level="level+1" :id-tree="idTree"></title-tree></template>`,
 })
 
-new SaetComponent({
+ SaetComponent({
     template: '#side-top',
     name: 'side-top',
     setup(props, context) {
         const adminBtnRef = ref()
         const adminInfoRef = ref()
         const drawer = ref(false)
-        const store = Vuex.useStore();
-        const openTabList = Vue.computed(() => { return store.state.openTabList });
-        const adminTheme = reactive(store.state.adminTheme);
+        const openTabList = Vue.computed(() => { return store.openTabList });
+        const adminTheme = reactive(store.adminTheme);
         const relTheme = ref(THEME);
+
         const colorList = [
             { title: '紫色', name: 'purple' },
             { title: '蓝色', name: 'blue' },
@@ -309,17 +308,17 @@ new SaetComponent({
         // )
 
         // const store = Vuex.useStore();
-        const tabActiveId = Vue.computed(() => { return store.state.tabActiveId });
+        const tabActiveId = Vue.computed(() => { return store.tabActiveId });
 
         // 一级菜单
-        const mainMenuId = Vue.computed(() => { return store.state.mainMenuId });
+        const mainMenuId = Vue.computed(() => { return store.mainMenuId });
         // 二级菜单
-        const subMenuId = Vue.computed(() => { return store.state.subMenuId });
+        const subMenuId = Vue.computed(() => { return store.subMenuId });
         const changeTab = (id) => {
             let menu = openTabList.value.find((item) => item.id == id);
-            store.state.subMenuId = menu.id
-            store.state.mainMenuId = menu.T_root_id
-            store.state.tabActiveId = menu.id
+            store.subMenuId = menu.id
+            store.mainMenuId = menu.T_root_id
+            store.tabActiveId = menu.id
         }
         // 监听子菜单变化
         Vue.watch(
@@ -336,7 +335,7 @@ new SaetComponent({
 
 
 
-        const changeTheme = (theme, b) => {
+        const changeTheme = (theme, b,c) => {
             if (b === true) adminTheme.theme = theme
             if (theme == 'system') {
                 const isDarktheme = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -344,6 +343,10 @@ new SaetComponent({
             }
             relTheme.value = theme;
             changeDomTheme()
+            // 改变并保存
+            if(c === true){
+                St.cookie.set('admin_theme', JSON.stringify(adminTheme))
+            }
         }
         const changeColor = (color) => {
             adminTheme.color = color
@@ -406,7 +409,7 @@ new SaetComponent({
                 changeTab(openTabList.value[index - 1].id)
             }
             // 最后移除数组中对应的json数据 ，先移除为报错
-            store.state.openTabList.splice(index, 1);
+            store.openTabList.splice(index, 1);
         }
 
         const tabRef = ref()
@@ -481,7 +484,7 @@ new SaetComponent({
                     wscript.SendKeys("{F11}");
                 }
             }
-        },
+        }, 
         // changeTab(id) {
         //     if (this.activeTabId == id) {
         //         return false;

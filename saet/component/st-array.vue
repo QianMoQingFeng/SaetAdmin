@@ -19,7 +19,7 @@
     </div>
 </template>
 <script>
-new SaetComponent({
+ SaetComponent({
     name: 'st-array',
     template: '#st-array',
     props: { modelValue: [Array, String] },

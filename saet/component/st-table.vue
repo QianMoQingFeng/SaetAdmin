@@ -269,7 +269,7 @@
 </template>
 <script>
 
-new SaetComponent(
+ SaetComponent(
     {
         name: 'saet-table',
         template: '#saet-table',

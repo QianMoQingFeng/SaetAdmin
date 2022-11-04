@@ -53,9 +53,9 @@
         </el-form-item>
     </el-form>
 </template>
-{component is="st-json,st-array,st-upload-image"/}
+{component is="st-array,st-json,st-upload-image"/}
 <script>
-new SaetComponent({
+SaetComponent({
     name: 'st-config',
     template: '#st-config',
     props: { list: Array, url: String, isBack: { type: Boolean, default: true }, isOperation: { type: Boolean, default: false } },

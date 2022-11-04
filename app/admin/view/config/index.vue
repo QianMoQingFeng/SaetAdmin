@@ -1,3 +1,4 @@
+
 <template>
     <div>
         <el-tabs type="border-card" v-model="defaultName">
@@ -6,18 +7,17 @@
                     <el-button icon="refresh" size="small" circle @click="refresh" :loading="refreshIng"></el-button>
                 </template>
             </el-tab-pane>
-
             <el-tab-pane :label="title" :name="name" v-for="(title, name) in groupList">
                 <el-alert title="⚠️ 注意，请谨慎修改" type="warning" :closable="false" v-if="name == 'admin_theme'">
                     <template #default>
-                        主题相关设置请点击，右上角 <img src="/static/img/theme.png" style="width: 20px;height: 20px;" alt="主题设置" />
+                        主题相关设置请点击，右上角 <img src="/static/saet/img/theme.png" style="width: 20px;height: 20px;"
+                            alt="主题设置" />
                         图标设置，下方仅用于开发者调试全局默认配置
                     </template>
                 </el-alert>
                 <st-config :list="configList[name]" :url="ST.apiContUrl + '/edit_value'" @edit="edit"
                     :is-operation="true" @success="refresh()"></st-config>
             </el-tab-pane>
-
             <el-tab-pane label="添加" name="addConfig">
                 <template #label>
                     <el-tag type="info" size="normal" effect="plain" @close="">
@@ -34,48 +34,18 @@
         <st-config :list="editConfig" :url="ST.apiContUrl + '/edit'" @success="addConfigSuccess()" ref="editConfigRef"
             :is-Back="false"></st-config>
     </el-dialog>
-
 </template>
 
 
 
-<style>
-.el-tabs--border-card {
-    border-radius: 5px;
-}
-
-.el-tabs--border-card>.el-tabs__header {
-    border-radius: 5px 5px 0 0;
-}
-
-
-.config-item {
-    display: flex;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--el-fill-color-light);
-}
-
-.config-item .title {
-    width: 120px;
-    padding-left: 10px;
-    color: var(--el-text-color-secondary);
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.config-item .content {
-    display: flex;
-    width: 500px;
-}
-</style>
 {component is="st-config"/}
 
-<script>
+
+<script type="module">
 new SaetApp({
     setup() {
         const groupList = ref(ST.groupList);
         const configList = ref(ST.configList);
-
         const defaultName = ref(Object.keys(groupList.value)[0])
 
         const typeList = {
@@ -170,6 +140,35 @@ new SaetApp({
 
 
 </script>
+<style>
+.el-tabs--border-card {
+    border-radius: 5px;
+}
+
+.el-tabs--border-card>.el-tabs__header {
+    border-radius: 5px 5px 0 0;
+}
+
+
+.config-item {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--el-fill-color-light);
+}
+
+.config-item .title {
+    width: 120px;
+    padding-left: 10px;
+    color: var(--el-text-color-secondary);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.config-item .content {
+    display: flex;
+    width: 500px;
+}
+</style>
 
 
 

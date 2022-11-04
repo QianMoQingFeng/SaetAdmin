@@ -1,0 +1,257 @@
+* {
+	margin: 0px;
+	-webkit-text-size-adjust: none;
+}
+
+@keyframes twinkle {
+	0% {
+		transform: scale(.8)
+	}
+
+	50% {
+		transform: scale(1.1)
+	}
+
+	to {
+		transform: scale(1)
+	}
+}
+
+.el-icon svg {
+	animation: twinkle 400ms ease-in-out;
+}
+
+.el-icon svg,
+.el-button:hover .el-icon {
+	animation: twinkle 400ms ease-in-out;
+}
+
+.el-icon.no-twinkle svg,
+.el-button:hover .no-twinkle.el-icon {
+	animation: none;
+}
+
+$colorH: (
+	blue: 210,
+	purple:227,
+	pink:330,
+	error:353,
+	orange:25,
+	yellow:36,
+	green:109,
+	invert:0
+);
+
+$colorS: (
+	green:66%,
+	invert:5%,
+	purple:80%
+);
+$colorL: (
+	green:43%,
+	invert:15%
+);
+$colorLdark: (
+	invert:0%
+);
+
+html,
+.theme-color {
+	$s : 100%;
+	$l : 60%;
+	$ld : 60%;
+
+	@each $color,
+	$h in $colorH {
+
+		@if map-get($colorS, $color) {
+			$s : map-get($colorS, $color);
+		}
+
+		@if map-get($colorL, $color) {
+			$l : map-get($colorL, $color);
+		}
+
+		@if map-get($colorLdark, $color) {
+			$ld : map-get($colorLdark, $color);
+		}
+
+		&.#{$color} {
+			&.light {
+				--el-color-primary: hsl(#{$h}, #{$s}, #{$l});
+				--el-color-primary-light-3: hsl(#{$h}, #{$s}, 74%);
+				--el-color-primary-light-5: hsl(#{$h}, #{$s}, 81%);
+				--el-color-primary-light-7: hsl(#{$h}, #{$s}, 89%);
+				--el-color-primary-light-8: hsl(#{$h}, #{$s}, 93%);
+				--el-color-primary-light-9: hsl(#{$h}, #{$s}, 96%);
+				--el-color-primary-dark-2: hsl(#{$h}, #{$ld}, 50%);
+			}
+
+			&.dark {
+				--el-color-primary: hsl(#{$h}, #{$s}, #{$l});
+				--el-color-primary-light-3: hsl(#{$h}, 57%, 46%);
+				--el-color-primary-light-5: hsl(#{$h}, 53%, 35%);
+				--el-color-primary-light-7: hsl(#{$h}, 47%, 24%);
+				--el-color-primary-light-8: hsl(#{$h}, 40%, 19%);
+				--el-color-primary-light-9: hsl(#{$h}, 29%, 13%);
+				--el-color-primary-dark-2: hsl(#{$h}, #{$ld}, 50%);
+			}
+		}
+	}
+
+
+
+}
+
+// 定义内外边距，历遍1-40
+@for $i from 0 through 40 {
+
+	// 只要双数和能被5除尽的数
+	@if $i % 2==0 or $i % 5==0 {
+		.st-m-#{$i} {
+			margin: $i + px !important;
+		}
+
+		.st-p-#{$i} {
+			padding: $i + px !important;
+		}
+
+		@each $short,
+		$long in l left,
+		t top,
+		r right,
+		b bottom {
+
+			.st-m-#{$short}-#{$i} {
+				margin-#{$long}: $i + px !important;
+			}
+
+			.st-m-x-#{$i} {
+				margin-left: $i + px !important;
+				margin-right: $i + px !important;
+			}
+
+			.st-m-y-#{$i} {
+				margin-bottom: $i + px !important;
+				margin-top: $i + px !important;
+			}
+
+			.st-p-#{$short}-#{$i} {
+				padding-#{$long}: $i + px !important;
+			}
+
+			.st-p-x-#{$i} {
+				padding-left: $i + px !important;
+				padding-right: $i + px !important;
+			}
+
+			.st-p-y-#{$i} {
+				padding-top: $i + px !important;
+				padding-bottom: $i + px !important;
+			}
+		}
+	}
+}
+
+.st-flex {
+	display: flex;
+	flex-direction: row;
+
+	&-col {
+		display: flex;
+		flex-direction: column;
+	}
+
+}
+
+.align-center {
+	align-items: center;
+}
+
+.justify-between {
+	justify-content: space-between;
+}
+
+.justify-around {
+	justify-content: space-around;
+}
+
+.justify-center {
+	justify-content: center;
+}
+
+.st-dots {
+	display: flex;
+	flex-direction: row;
+	cursor: pointer !important;
+
+	&:hover .el-icon {
+		display: inline-flex !important;
+	}
+
+	& .color-dot {
+		width: 13.5px;
+		height: 13.5px;
+		line-height: 13.5px;
+		border-radius: 50%;
+		text-align: center;
+		position: relative;
+		color: #3e3e3e;
+		font-weight: 700;
+
+		& .el-icon {
+			display: none;
+			font-size: 12px;
+
+			&.left {
+				position: absolute;
+				left: 0;
+				top: 0;
+				transform: rotate(-45deg);
+				margin-top: -1px;
+				margin-left: -1px;
+			}
+
+			&.right {
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				transform: rotate(135deg);
+				margin-bottom: -1px;
+				margin-right: -1px;
+			}
+
+		}
+
+		&.is-fullscreen {
+			& .el-icon {
+
+
+				&.left {
+					transform: rotate(135deg);
+				}
+
+				&.right {
+					transform: rotate(-45deg);
+				}
+
+			}
+		}
+
+		&+.color-dot {
+			margin-left: 8px;
+		}
+
+		&.error {
+			background-color: var(--el-color-error);
+		}
+
+		&.warning {
+			background-color: var(--el-color-warning);
+		}
+
+		&.success {
+			background-color: var(--el-color-success);
+		}
+	}
+}

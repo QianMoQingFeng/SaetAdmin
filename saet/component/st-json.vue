@@ -47,7 +47,7 @@
 </template>
 
 <script>
-new SaetComponent({
+ SaetComponent({
     name: 'st-json',
     template: `#st-json`,
     props: { modelValue: [Object, String] },

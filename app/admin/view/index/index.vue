@@ -13,13 +13,13 @@
     {include file="/index/components/main-menu" /}
     {include file="/index/components/sub-menu" /}
 
-<script>
+<script type="module">
+import {store} from '/addons/admin/js/store.js'
+
 new SaetApp({
     data() {
         return {
-            isCollapse: false,
-            isMinimize: false,
-            loadEnd: false,
+                 loadEnd: false,
         };
     },
     created() {
@@ -30,9 +30,9 @@ new SaetApp({
             // loading.close()
         }, 1000);
     },
-    setup(props) {
-        const store = Vuex.useStore();
-        const adminTheme = reactive(store.state.adminTheme);
+    setup() {
+        if (window.innerWidth < 991) store.adminTheme.menu.minimize = true
+        const adminTheme = reactive(store.adminTheme);
         return { adminTheme }
     },
     mounted() {

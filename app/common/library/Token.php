@@ -4,7 +4,6 @@ namespace app\common\library;
 
 use DateTime;
 use think\facade\Cache;
-
 class Token
 {
 
@@ -68,7 +67,8 @@ class Token
         ];
 
         $dataStr = json_encode($data);
-        $encry = md5(md5($dataStr) . \saet\tool\Random::alnum(10));
+        // $encry = md5(md5($dataStr) . \saet\tool\Random::alnum(10));
+        $encry = md5(md5($dataStr) . \think\helper\Str::random(10,2,'0123456789'));
         $data['token'] = $token = self::encryptToken($auth_id, $encry);
 
         $tokenCache = self::getTokenCache();

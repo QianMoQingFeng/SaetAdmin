@@ -84,7 +84,7 @@ class AdminBase extends Addons
             $adminTheme = [];
             foreach ($admin_theme_list as $key => $value) {
                 if (substr($value['value'], 0, 1) == '{' && substr($value['value'], -1) == '}') {
-                    $value['value'] = json_decode($value['value'],true);
+                    $value['value'] = json_decode($value['value'], true);
                 }
                 $adminTheme[$value['name']] = $value['value'];
             }

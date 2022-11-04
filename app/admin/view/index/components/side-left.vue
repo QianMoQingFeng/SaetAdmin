@@ -91,10 +91,9 @@
                                 <saet-icon name="ri-arrow-up-circle-line" :size="18"></saet-icon>
                             </el-button>
                         </div>
-                        <!-- ri-refresh-line -->
                         <div class="st-flex" style="flex:1;"></div>
                         <el-button @click="" text class="design-btn">
-                            <img src="/static/img/theme.png" style="width: 20px;height: 20px;" alt="主题设置">
+                            <img src="/static/saet/img/theme.png" style="width: 20px;height: 20px;" alt="主题设置">
                         </el-button>
                         <div class="arrow">
                             <el-button @click="isSystemCollapse = !isSystemCollapse" link>
@@ -106,8 +105,6 @@
                     <div style="height:12px;"></div>
                 </div>
             </el-scrollbar>
-
-
         </div>
 
         <div v-show="adminTheme.menu_type == 'main-sub'" class="side2">
@@ -115,12 +112,14 @@
         </div>
     </aside>
 </template>
-
-<script>
-new SaetComponent({
+ 
+<script type="module">
+import {store} from '/addons/admin/js/store.js'
+store.adminTheme.menu_type = 'main';
+console.log(store.adminTheme.menu_type);
+ SaetComponent({
     name: 'side-left',
     template: '#side-left',
-
     setup(props, context) {
         const searchValue = ref()
         const isSystemCollapse = ref(true)
@@ -130,8 +129,7 @@ new SaetComponent({
         const progressAnimation = ref(false)
         const searchRef = ref()
         const collectRef = ref()
-        const store = Vuex.useStore();
-        const adminTheme = reactive(store.state.adminTheme);
+        const adminTheme = reactive(store.adminTheme);
         const isMainCollapse = Vue.computed(() => {
             let r = adminTheme.menu_type == 'main-sub' ? true : false
             return r
@@ -147,15 +145,15 @@ new SaetComponent({
         })
 
         // 一级菜单
-        const mainMenuId = Vue.computed(() => { return store.state.mainMenuId });
+        const mainMenuId = Vue.computed(() => { return store.mainMenuId });
         // 二级菜单
-        const subMenuId = Vue.computed(() => { return store.state.subMenuId });
+        const subMenuId = Vue.computed(() => { return store.subMenuId });
         // const subMenuList = ref(ST.menuListTree.find((item) => item.id == ST.openMenu.T_root_id));
         const subMenuList = ref();
 
         const setSubMenu = (e) => {
-            if (!e.children) { openIfarm(e); store.state.subMenuId = e.id }
-            store.state.mainMenuId = e.T_root_id
+            if (!e.children) { openIfarm(e); store.subMenuId = e.id }
+            store.mainMenuId = e.T_root_id
             subMenuList.value = e
         }
 
@@ -164,7 +162,6 @@ new SaetComponent({
         Vue.watch(
             () => mainMenuId,
             (n, o) => {
-                console.log(n);
                 let row = ST.menuListTree.find((item) => item.id == n.value)
                 subMenuList.value = row
             }, { deep: true, immediate: true }
@@ -193,7 +190,7 @@ new SaetComponent({
             }
         }
 
-        const openTabList = Vue.computed(() => { return store.state.openTabList });
+        const openTabList = Vue.computed(() => { return store.openTabList });
 
         const openIfarm = (e) => {
             // 判断是否已经打开了页面
@@ -210,8 +207,8 @@ new SaetComponent({
                 }
 
                 NProgress.start();
-                store.state.tabActiveId = e.id
-                store.state.openTabList.push(e)
+                store.tabActiveId = e.id
+                store.openTabList.push(e)
                 var container = document.createElement("section");
                 container.className = "el-container saet-page-box";
                 container.id = "saet_page_" + e.id;
@@ -240,7 +237,7 @@ new SaetComponent({
                 }, 10000);
             } else {
                 // 只切换
-                store.state.tabActiveId = e.id
+                store.tabActiveId = e.id
                 context.emit('setActive', { menu: e, type: 'change' });
             }
         }

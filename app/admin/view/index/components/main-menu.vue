@@ -59,23 +59,23 @@
 
 
 </template>
-<script >
-new SaetComponent({
+<script type="module">
+import { store } from '/addons/admin/js/store.js'
+ SaetComponent({
     name: 'st-main-menu',
     template: '#st-main-menu',
     props: {
         menuList: Array
     }, setup(props, context) {
 
-        const store = Vuex.useStore();
-        const adminTheme = reactive(store.state.adminTheme);
+        const adminTheme = reactive(store.adminTheme);
 
         const setMenu = (e) => {
             // if (adminTheme.menu_type == 'main-sub') return context.emit('setSubMenu', e);
             context.emit('setSubMenu', e)
         }
-        const mainMenuId = Vue.computed(() => { return store.state.mainMenuId })
-        const subMenuId = Vue.computed(() => { return store.state.subMenuId })
+        const mainMenuId = Vue.computed(() => { return store.mainMenuId })
+        const subMenuId = Vue.computed(() => { return store.subMenuId })
 
         const isCollapse = Vue.computed(() => {
             let r = adminTheme.menu_type == 'main-sub' ? true : false

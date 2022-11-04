@@ -163,7 +163,7 @@ class Index extends AdminBase
         $name = $file->md5() . '.' . $file->getOriginalExtension();
         $save = Filesystem::disk('public')->putFileAs(Date('Y/m/d'), $file, $name);
         if ($save) {
-            $this->success('', '/storage/' . $save);
+            $this->success('', '/update/' . $save);
         } else {
             $this->error('上传失败');
         }

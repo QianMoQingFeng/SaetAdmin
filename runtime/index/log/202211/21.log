@@ -1,3 +1,0 @@
-[2022-11-21T16:17:57+08:00][sql] CONNECT:[ UseTime:0.078571s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
-[2022-11-21T16:17:57+08:00][sql] SHOW FULL COLUMNS FROM `sts_config` [ RunTime:0.098891s ]
-[2022-11-21T16:17:57+08:00][sql] SELECT * FROM `sts_config` WHERE  `group` = 'admin_theme' [ RunTime:0.009984s ]

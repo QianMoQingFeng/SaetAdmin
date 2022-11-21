@@ -26,6 +26,8 @@ trait AdminAuthTrait
         $this->auth = AdminAuth::instance();
         $token = $this->request->param('token', Cookie::get('token')) ?? $this->request->server('HTTP_TOKEN');
         $this->auth->init($token);
+
+        
         // 是否需要登录
         if (!$this->auth->checkAction($this->noLogin)) {
             //是否登录
@@ -37,15 +39,14 @@ trait AdminAuthTrait
                 exit;
             }
             // 判断是否需要验证权限
-            if ($this->auth->checkAction($this->noAuth) == false && !in_array('*', $this->auth->getRuleIds())) {
+            if ($this->auth->checkAction($this->noAuth) == false && !$this->auth->isSuper()) {
                 $ruleId = \app\admin\model\admin\Rule::cache(true)->where('url', $path)->value('id');
-                if (!in_array($ruleId, $this->auth->getRuleIds())) {
+                if (!in_array($ruleId, $this->auth->rule_ids)) {
                     echo '你没有权限';
                     exit;
                 }
             }
         }
-
 
         $self = $this->request->get('_self', false);
 

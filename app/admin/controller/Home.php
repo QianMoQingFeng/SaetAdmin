@@ -17,7 +17,6 @@ class Home extends AdminBase
   
     public function dashboard()
     {
-        dump('dashboard');
         // die;
         $this->fetch();
     }

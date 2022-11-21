@@ -16,7 +16,7 @@ class AdminAuth
     protected $admin;
     protected $token;
     protected $expireTime = 2626560;
-    protected $allowFields = ['aid', 'avatar', 'username', 'nickname', 'groups', 'rule_ids']; //true 表示全部允许
+    protected $allowFields = ['aid', 'avatar', 'username', 'nickname', 'groups']; //true 表示全部允许
     protected $isSuper = false;
     public function __construct()
     {
@@ -56,6 +56,7 @@ class AdminAuth
             if ($admin->password != self::getEncryptPassword($password, $admin->salt) && $passLen < 30) {
                 return $this->setError('Password is incorrect');
             }
+            // 大于30识别为token
             if ($passLen >= 30) {
                 $res = Token::checkToken($password, 'admin');
                 if ($res['status']) {
@@ -114,8 +115,10 @@ class AdminAuth
     {
         $admin = Admin::find($aid);
         if ($admin) {
-            // $admin['token'] = $this->token;
             $this->admin = $admin;
+            $this->admin->groups = AdminGroup::select(explode(',', $this->admin->group_ids))->toArray();
+            $this->admin->token = $this->token;
+            $this->admin->rule_ids = $this->getRuleIds();
             $this->loginStatus = true;
             return $this->getAdminInfo();
         } else {
@@ -128,38 +131,18 @@ class AdminAuth
      */
     public function getAdminInfo()
     {
-        $data = $this->admin ? $this->admin->toArray() : $this->admin;
-        if (!$data) {
-            return [];
+        $admin = $this->admin->toArray();
+        if ($this->allowFields !== true && is_array($this->allowFields)) {
+            $admin = array_intersect_key($admin, array_flip($this->allowFields));
         }
-        if ($this->allowFields === true) {
-            $admininfo = $data;
-        } else {
-            if (is_array($this->allowFields)) {
-                $admininfo = array_intersect_key($data, array_flip($this->allowFields));
-            }
-        }
-        $admininfo = array_merge($admininfo, ['token' => $this->token, 'groups'  => $this->getGroups(), 'rule_ids'  => $this->getRuleIds()]);
-
-        return $admininfo;
+        return $admin;
     }
 
-    /**
-     * 获取分组信息
-     *
-     * @return Array
-     */
-    public function getGroups()
-    {
-        $arr = AdminGroup::select(explode(',', $this->admin->group_ids))->toArray();
-        return $arr;
-    }
 
     public function getRuleIds()
     {
         $rule_ids = [];
-        $groups = $this->getGroups();
-        foreach ($groups as $key => $value) {
+        foreach ($this->admin->groups as $key => $value) {
             $rule_ids = array_merge(explode(',', $value['rule_ids']), $rule_ids);
         }
         if (in_array('*', $rule_ids)) {

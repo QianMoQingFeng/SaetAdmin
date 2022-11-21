@@ -72,6 +72,7 @@ class AdminBase extends Controller
             $this->assign('apiContUrl', $apiContUrl);
             $this->assign('baseUrl', $baseUrl);
             $this->assign('apiRootUrl', $apiRootUrl);
+
         }
 
         // 兼容插件Admin模型

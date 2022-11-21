@@ -108,7 +108,6 @@ if (!function_exists('echo_value')) {
             font-size: 28px;
             font-weight: 500;
             line-height: 32px;
-            word-break: break-all;
         }
         h2{
             color: #4288ce;

@@ -1,4 +1,3 @@
-
 <template>
     <div>
         <el-tabs type="border-card" v-model="defaultName">
@@ -37,9 +36,7 @@
 </template>
 
 
-
 {component is="st-config"/}
-
 
 <script type="module">
 new SaetApp({

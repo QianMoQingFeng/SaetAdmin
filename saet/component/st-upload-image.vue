@@ -1,6 +1,6 @@
 <template id="st-image-upload">
     <el-upload v-drag="dragOptions" v-model:file-list="fileList"
-        action="http://10.211.55.6:66/admin.php/index/upload?self=1" list-type="picture-card"
+        action="http://10.211.55.6:66/admin.php/index/upload?_self=1" list-type="picture-card"
         :on-preview="handlePictureCardPreview" :on-exceed="handleExceed" multiple drag v-bind="config">
         <el-icon>
             <Plus />

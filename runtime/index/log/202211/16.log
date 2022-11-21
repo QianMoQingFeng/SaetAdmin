@@ -1,0 +1,54 @@
+[2022-11-16T12:20:43+08:00][sql] CONNECT:[ UseTime:0.004407s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:20:43+08:00][sql] select 1 [ RunTime:0.001448s ]
+[2022-11-16T12:20:43+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.004495s ]
+[2022-11-16T12:20:43+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'sssss' LIMIT 1 [ RunTime:0.000997s ]
+[2022-11-16T12:20:43+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `mobile` = '13888888888' LIMIT 1 [ RunTime:0.000069s ]
+[2022-11-16T12:20:43+08:00][sql] INSERT INTO `st_admin` SET `group_ids` = '1' , `username` = 'sssss' , `nickname` = 'sssss' , `password` = '455a3b079e03ba9b7c470dc464b986c4ee4325b9' , `email` = 'email@saet.io' , `mobile` = '13888888888' , `salt` = 'M0U976QO' , `create_time` = '2022-11-16 12:20:43.834554' , `update_time` = '2022-11-16 12:20:43.834595' [ RunTime:0.000215s ]
+[2022-11-16T12:20:50+08:00][sql] CONNECT:[ UseTime:0.001146s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:20:50+08:00][sql] select 1 [ RunTime:0.000784s ]
+[2022-11-16T12:20:50+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.003242s ]
+[2022-11-16T12:20:50+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'sssss' LIMIT 1 [ RunTime:0.000873s ]
+[2022-11-16T12:20:50+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `mobile` = '13888888888' LIMIT 1 [ RunTime:0.000073s ]
+[2022-11-16T12:20:50+08:00][sql] INSERT INTO `st_admin` SET `group_ids` = '1' , `username` = 'sssss' , `nickname` = 'sssss' , `password` = 'a4546dd1561fa48e558490763583ff0a3b74a207' , `email` = 'email@saet.io' , `mobile` = '13888888888' , `salt` = 'J6NKYL8C' , `create_time` = '2022-11-16 12:20:50.556424' , `update_time` = '2022-11-16 12:20:50.556440' [ RunTime:0.000373s ]
+[2022-11-16T12:27:54+08:00][sql] CONNECT:[ UseTime:0.002447s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:27:54+08:00][sql] select 1 [ RunTime:0.001260s ]
+[2022-11-16T12:27:54+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.003398s ]
+[2022-11-16T12:27:54+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'a' LIMIT 1 [ RunTime:0.000641s ]
+[2022-11-16T12:28:00+08:00][sql] CONNECT:[ UseTime:0.002374s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:28:00+08:00][sql] select 1 [ RunTime:0.002041s ]
+[2022-11-16T12:28:00+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.001840s ]
+[2022-11-16T12:28:00+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'a' LIMIT 1 [ RunTime:0.000618s ]
+[2022-11-16T12:28:27+08:00][sql] CONNECT:[ UseTime:0.002533s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:28:27+08:00][sql] select 1 [ RunTime:0.001450s ]
+[2022-11-16T12:28:27+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.003340s ]
+[2022-11-16T12:28:27+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'aaaaa' LIMIT 1 [ RunTime:0.000619s ]
+[2022-11-16T12:28:30+08:00][sql] CONNECT:[ UseTime:0.002154s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:28:30+08:00][sql] select 1 [ RunTime:0.001087s ]
+[2022-11-16T12:28:30+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.001608s ]
+[2022-11-16T12:28:30+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'aaaaa' LIMIT 1 [ RunTime:0.000635s ]
+[2022-11-16T12:28:30+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `mobile` = '13888888888' LIMIT 1 [ RunTime:0.000071s ]
+[2022-11-16T12:28:30+08:00][sql] INSERT INTO `st_admin` SET `group_ids` = '1' , `username` = 'aaaaa' , `nickname` = 'aaaaa' , `password` = '304fc717b8eb272c3255572c10d33bc9b425dfa3' , `email` = 'email@saet.io' , `mobile` = '13888888888' , `salt` = 'JZHSMKX3' , `create_time` = '2022-11-16 12:28:30.721607' , `update_time` = '2022-11-16 12:28:30.721632' [ RunTime:0.000164s ]
+[2022-11-16T12:30:24+08:00][sql] CONNECT:[ UseTime:0.001923s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:30:24+08:00][sql] select 1 [ RunTime:0.000707s ]
+[2022-11-16T12:30:24+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.002889s ]
+[2022-11-16T12:30:24+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'sssss' LIMIT 1 [ RunTime:0.000534s ]
+[2022-11-16T12:30:24+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `mobile` = '13888888888' LIMIT 1 [ RunTime:0.000073s ]
+[2022-11-16T12:30:24+08:00][sql] INSERT INTO `st_admin` SET `group_ids` = '1' , `username` = 'sssss' , `nickname` = 'sssss' , `password` = 'fb420d553e532fc1dd5e6cd341da68f766b0564a' , `email` = 'email@saet.io' , `mobile` = '13888888888' , `salt` = '2KVOPE3H' , `create_time` = '2022-11-16 12:30:24.354918' , `update_time` = '2022-11-16 12:30:24.354953' [ RunTime:0.000138s ]
+[2022-11-16T12:30:41+08:00][sql] CONNECT:[ UseTime:0.004379s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:30:41+08:00][sql] select 1 [ RunTime:0.003436s ]
+[2022-11-16T12:30:41+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.003171s ]
+[2022-11-16T12:30:41+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'sssss' LIMIT 1 [ RunTime:0.000805s ]
+[2022-11-16T12:30:41+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `mobile` = '13888888888' LIMIT 1 [ RunTime:0.000075s ]
+[2022-11-16T12:30:41+08:00][sql] INSERT INTO `st_admin` SET `group_ids` = '1' , `username` = 'sssss' , `nickname` = 'sssss' , `password` = '0c7bf83e7a0c5c4ac50455a11e2baf2fc1e44098' , `email` = 'email@saet.io' , `mobile` = '13888888888' , `salt` = '6UJ82DB3' , `create_time` = '2022-11-16 12:30:41.495072' , `update_time` = '2022-11-16 12:30:41.495105' [ RunTime:0.000158s ]
+[2022-11-16T12:31:31+08:00][sql] CONNECT:[ UseTime:0.002256s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:31:31+08:00][sql] select 1 [ RunTime:0.001260s ]
+[2022-11-16T12:31:31+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.003523s ]
+[2022-11-16T12:31:31+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'sssss' LIMIT 1 [ RunTime:0.000956s ]
+[2022-11-16T12:31:31+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `mobile` = '13888888888' LIMIT 1 [ RunTime:0.000088s ]
+[2022-11-16T12:31:31+08:00][sql] INSERT INTO `st_admin` SET `group_ids` = '1' , `username` = 'sssss' , `nickname` = 'sssss' , `password` = 'b9e164cd826920cce633f09b40d4e588ff5c5c5e' , `email` = 'email@saet.io' , `mobile` = '13888888888' , `salt` = '6ZA3RPB4' , `create_time` = '2022-11-16 12:31:31.682874' , `update_time` = '2022-11-16 12:31:31.682906' [ RunTime:0.000239s ]
+[2022-11-16T12:35:12+08:00][sql] CONNECT:[ UseTime:0.001823s ] mysql:host=localhost;port=3306;dbname=testaa;charset=utf8
+[2022-11-16T12:35:12+08:00][sql] select 1 [ RunTime:0.001122s ]
+[2022-11-16T12:35:12+08:00][sql] SHOW FULL COLUMNS FROM `st_admin` [ RunTime:0.002705s ]
+[2022-11-16T12:35:12+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `username` = 'aaaaa' LIMIT 1 [ RunTime:0.000719s ]
+[2022-11-16T12:35:12+08:00][sql] SELECT `aid` FROM `st_admin` WHERE  `mobile` = '13888888888' LIMIT 1 [ RunTime:0.000081s ]
+[2022-11-16T12:35:12+08:00][sql] INSERT INTO `st_admin` SET `group_ids` = '1' , `username` = 'aaaaa' , `nickname` = 'aaaaa' , `password` = '6e1fd54e6fcf16bca9bb65c0d58473a05486384c' , `email` = 'email@saet.io' , `mobile` = '13888888888' , `salt` = '5Z0RMLVN' , `create_time` = '2022-11-16 12:35:12.203307' , `update_time` = '2022-11-16 12:35:12.203356' [ RunTime:0.000134s ]

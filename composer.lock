@@ -508,16 +508,16 @@
         },
         {
             "name": "qianmoqingfeng/think-addons",
-            "version": "v3.0.2",
+            "version": "v3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/QianMoQingFeng/think-addons.git",
-                "reference": "4b30d84242d1bef0b08528aea130a6a8db0db935"
+                "reference": "6d916e769d72bd07edb0c8fdcffc56efa7a40f07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QianMoQingFeng/think-addons/zipball/4b30d84242d1bef0b08528aea130a6a8db0db935",
-                "reference": "4b30d84242d1bef0b08528aea130a6a8db0db935",
+                "url": "https://api.github.com/repos/QianMoQingFeng/think-addons/zipball/6d916e769d72bd07edb0c8fdcffc56efa7a40f07",
+                "reference": "6d916e769d72bd07edb0c8fdcffc56efa7a40f07",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -564,9 +564,9 @@
             "description": "The ThinkPHP6 Addons Package",
             "support": {
                 "issues": "https://github.com/QianMoQingFeng/think-addons/issues",
-                "source": "https://github.com/QianMoQingFeng/think-addons/tree/v3.0.2"
+                "source": "https://github.com/QianMoQingFeng/think-addons/tree/v3.0.3"
             },
-            "time": "2022-11-01T11:25:02+00:00"
+            "time": "2022-11-09T14:46:11+00:00"
         },
         {
             "name": "topthink/framework",

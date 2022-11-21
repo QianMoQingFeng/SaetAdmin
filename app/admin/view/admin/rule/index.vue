@@ -1,9 +1,9 @@
 
 <template>
     <div>
-        <saet-table :search="[]" :list="ST.list ?? []" :total="ST.total ?? 0" :fields="fields" :config="config"
+        <st-table :search="[]" :list="ST.list ?? []" :total="ST.total ?? 0" :fields="fields" :config="config"
             :table-default-config="tableConfig">
-        </saet-table>
+        </st-table>
     </div>
 </template>
 

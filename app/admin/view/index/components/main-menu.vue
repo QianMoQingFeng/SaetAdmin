@@ -60,7 +60,7 @@
 
 </template>
 <script type="module">
-import { store } from '/addons/admin/js/store.js'
+import { store } from '/app_static/admin/js/store.js'
  SaetComponent({
     name: 'st-main-menu',
     template: '#st-main-menu',

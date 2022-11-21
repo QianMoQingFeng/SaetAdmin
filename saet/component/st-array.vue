@@ -49,5 +49,4 @@
         return { dragSort, forValue, close, add, input }
     }
 })
-
 </script>

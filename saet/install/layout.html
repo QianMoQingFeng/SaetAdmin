@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+
+  {include file="../app/admin/view/public/assgin.html" /}
+
+  <script>
+    const theheColor = 'purple';
+    let THEME = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
+    const htmlDom = document.getElementsByTagName('html')[0]
+    htmlDom.setAttribute('class', `${THEME} ${theheColor}`)
+
+  </script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport"
+    content="width=device-width,height=device-height,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>SaetAdmin {:lang('install')}</title>
+
+  <script>const LANG = {};</script>
+  <script src="{:LANG_URL}"></script>
+
+  {package is='axios,saet'/}
+
+</head>
+
+<body>
+  <div id="saetApp"></div>
+  <div id="js-style"></div>
+
+  <vue>{__CONTENT__}</vue>
+
+  {component is="st-window"/}
+
+  <script type="module">
+
+    useSaetVue()
+
+    // 单窗口主动切换
+    window.matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', event => {
+        if (event.matches) {
+          htmlDom.setAttribute('class', `dark ${theheColor}`)
+        } else {
+          htmlDom.setAttribute('class', `light ${theheColor}`)
+        }
+      })
+
+  </script>
+
+</body>
+</html>

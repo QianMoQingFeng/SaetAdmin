@@ -1,5 +1,5 @@
 
-    <template type="text/html" id="side-top">
+<template type="text/html" id="side-top">
     <div class="side-top">
         <div class="saet-top">
             <div class="tabs" style="width:100%;">
@@ -10,7 +10,7 @@
                         <!-- removeTab  tabActiveId -->
                         <div class="line" v-if="index != 0"></div>
                         <div class="tab-content">
-                            <div class="title">{{  item.title  }}</div>
+                            <div class="title">{{ item.title }}</div>
                         </div>
                         <div class="tab-bg">
                             <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -55,22 +55,32 @@
                     </el-breadcrumb>
                 </div>
                 <div class="right">
-                    <el-tooltip class="box-item" effect="dark" content="如需跟随系统，点击右侧主题按钮设置" placement="bottom"
+                    <el-tooltip class="box-item" content="如需跟随系统，点击右侧主题按钮设置" placement="bottom"
                         :disabled="'{$adminTheme[\'theme\']}' == 'system' ? true : false">
-                        <div @click="changeTheme(relTheme == 'dark' ? 'light' : 'dark', true,true)" class="theme-toggler">
+                        <div @click="changeTheme(relTheme == 'dark' ? 'light' : 'dark', true, true)"
+                            class="theme-toggler">
                             <div class="switch">
                                 <div class="switch__action">
                                     <div class="switch__icon">
-                                        <saet-icon :size="13" name="DarkIcon"></saet-icon>
-                                        <saet-icon :size="13" name="LightIcon"></saet-icon>
+                                        <saet-icon :size="12" name="ri-moon-fill"></saet-icon>
+                                        <saet-icon :size="12" name="ri-sun-fill"></saet-icon>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </el-tooltip>
-
                     <el-button @click="" text circle>
-                        <saet-icon :size="20" name="ri-translate-2"></saet-icon>
+                        <el-dropdown >
+                            <saet-icon :size="20" name="ri-translate-2"></saet-icon>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item>中文简体</el-dropdown-item>
+                                    <el-dropdown-item>中文繁體</el-dropdown-item>
+                                    <el-dropdown-item>English</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+
                     </el-button>
 
                     <el-button @click="full_screen ? exitScreen() : fullScreen()" text circle>
@@ -81,10 +91,6 @@
                     <el-button text bg class="avatar" ref="adminBtnRef">
                         <el-avatar :size="28" :src="ST.admin.avatar">
                         </el-avatar>
-                        <div class="info">
-                            <span class="nickname">{{  ST.admin.nick_name  }}</span>
-                            <span class="username">{{  ST.admin.user_name  }}</span>
-                        </div>
                     </el-button>
 
                     <el-button @click="drawer = !drawer" text circle>
@@ -101,13 +107,13 @@
                         <el-avatar :size="50" :src="ST.admin.avatar" class="st-m-r-10">
                         </el-avatar>
                         <div class="st-flex-col justify-around st-p-y-4">
-                            <div><span class="st-m-r-5">{{  ST.admin.nick_name  }}</span>
-                                <el-tag size="small" type="info">Aid:{{  ST.admin.aid  }}</el-tag>
+                            <div><span class="st-m-r-5">{{ ST.admin.nick_name }}</span>
+                                <el-tag size="small" type="info">Aid:{{ ST.admin.aid }}</el-tag>
                             </div>
                             <div style="font-size: 12px;width: 160px;">
-                                <span>{{  ST.admin.user_name  }}</span>
-                                <span v-if="ST.admin.mobile || ST.admin.email">（{{  ST.admin.mobile || ST.admin.email 
-                                    }}）</span>
+                                <span>{{ ST.admin.username }}</span>
+                                <span v-if="ST.admin.mobile || ST.admin.email">（{{ ST.admin.mobile || ST.admin.email
+                                }}）</span>
                             </div>
                         </div>
                     </div>
@@ -118,12 +124,12 @@
                         <el-button type="primary" size="" plain @click="">个人资料</el-button>
                         <el-button type="danger" icon="SwitchButton" :loading="logouting" :disabled="logouting" plain
                             @click="logout()">
-                            {{  logouting ? '正在登出...' : '注销'  }}</el-button>
+                            {{ logouting ? '正在登出...' : '注销' }}</el-button>
                     </div>
                 </div>
             </el-popover>
 
-            <el-drawer v-model="drawer" title="外观设置" :size="300">
+            <el-drawer v-model="drawer" title="外观设置" :size="300" :z-index="3000">
                 <el-scrollbar style="padding:20px;">
                     <div class="st-style">
                         <div class="box">
@@ -154,7 +160,7 @@
                         </div>
                         <div class="box">
 
-                            <el-divider content-position="left"> 主色调<span class="info st-m-l-10">{{  colorTitle  }}</span>
+                            <el-divider content-position="left"> 主色调<span class="info st-m-l-10">{{ colorTitle }}</span>
                             </el-divider>
                             <div class="color">
                                 <template v-for="c in colorList">
@@ -175,6 +181,35 @@
                                     active-text="悬浮" inactive-text="吸附"></el-switch>
                             </div>
                         </div>
+
+                        <div class="box">
+                            <el-divider content-position="left"> 菜单悬浮/最小化</el-divider>
+                            <div class="layout st-flex-col" style="justify-content: space-around;">
+
+                                <el-form-item label="菜单悬浮" label-width="100px" style="--el-form-label-font-size: 13px">
+                                    <el-radio-group v-model="adminTheme.menu.menu_float">
+                                        <el-radio :label="true">悬浮</el-radio>
+                                        <el-radio :label="false">吸附</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+
+                                <el-form-item label="菜单最小化" label-width="100px" style="--el-form-label-font-size: 13px">
+                                    <el-radio-group v-model="adminTheme.menu.minimize">
+                                        <el-radio :label="true">最小化</el-radio>
+                                        <el-radio :label="false">正常</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+
+                                <el-form-item label="小屏设备" label-width="100px" style="--el-form-label-font-size: 13px">
+                                    <el-radio-group v-model="adminTheme.menu.minisize_auto">
+                                        <el-radio :label="true">菜单自动化最优</el-radio>
+                                        <el-radio :label="false">否</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+
+                            </div>
+                        </div>
+
 
                         <div class="box">
                             <el-divider content-position="left"> 菜单风格</el-divider>
@@ -259,15 +294,15 @@
 
 <script type="module">
 
-import {store} from '/addons/admin/js/store.js'
- 
- SaetComponent({
+import { store } from '/app_static/admin/js/store.js'
+
+SaetComponent({
     name: 'title-tree',
     props: { list: Array, level: Number, idTree: Array },
     template: `<template v-for="(v, index) in list"><template v-if="idTree[level] == v.id"><el-breadcrumb-item class=""> {{  v.title  }}  </el-breadcrumb-item></template><title-tree :list="v.children" v-if="v.children" :level="level+1" :id-tree="idTree"></title-tree></template>`,
 })
 
- SaetComponent({
+SaetComponent({
     template: '#side-top',
     name: 'side-top',
     setup(props, context) {
@@ -335,7 +370,7 @@ import {store} from '/addons/admin/js/store.js'
 
 
 
-        const changeTheme = (theme, b,c) => {
+        const changeTheme = (theme, b, c) => {
             if (b === true) adminTheme.theme = theme
             if (theme == 'system') {
                 const isDarktheme = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -344,7 +379,7 @@ import {store} from '/addons/admin/js/store.js'
             relTheme.value = theme;
             changeDomTheme()
             // 改变并保存
-            if(c === true){
+            if (c === true) {
                 St.cookie.set('admin_theme', JSON.stringify(adminTheme))
             }
         }
@@ -382,7 +417,7 @@ import {store} from '/addons/admin/js/store.js'
             if (e) {
                 // 全部
                 saveSysThemeIng.value = true
-                St.axios.post('config/setAdminTheme', {data:adminTheme}, { successToast: true }).then((res) => {
+                St.axios.post('config/setAdminTheme', { data: adminTheme }, { successToast: true }).then((res) => {
                     saveSysThemeIng.value = false
                 }).catch((err) => {
                     saveSysThemeIng.value = false
@@ -442,6 +477,7 @@ import {store} from '/addons/admin/js/store.js'
             }, { deep: true, immediate: true }
         )
 
+   
         return { idTreeArr, tabRef, scrollChange, adminBtnRef, adminInfoRef, drawer, adminTheme, changeTheme, changeColor, changeSideType, saveTheme, relTheme, colorList, saveThemeIng, saveSysThemeIng, changeMenuType, changeTab, removeTab, tabActiveId, openTabList }
     },
     computed: {
@@ -484,7 +520,7 @@ import {store} from '/addons/admin/js/store.js'
                     wscript.SendKeys("{F11}");
                 }
             }
-        }, 
+        },
         // changeTab(id) {
         //     if (this.activeTabId == id) {
         //         return false;
@@ -496,7 +532,7 @@ import {store} from '/addons/admin/js/store.js'
         // 登出
         logout() {
             this.logouting = true;
-            St.axios.post('admin/logout', this.formData, { loadingToast: false, successToast: true }).then((res) => {
+            St.axios.post('index/logout', this.formData, { loadingToast: false, successToast: true }).then((res) => {
                 this.logouting = false;
                 setTimeout(() => {
                     window.location.reload();
@@ -513,7 +549,6 @@ import {store} from '/addons/admin/js/store.js'
                 this.changeTab(event.state.id)
             }
         });
-
         // 监听全屏切换
         window.onresize = () => {
             var isFull = !!(document.webkitIsFullScr90een || document.mozFullScreen ||
@@ -528,570 +563,573 @@ import {store} from '/addons/admin/js/store.js'
     },
 })
 </script>
-    <style>
-    .el-drawer__body {
-        padding: 0px;
-    }
-    
-    .side-top {
-        --top-right-width: 320px;
-        display: flex;
-    }
-    
-    .side-top .el-button {
-        border-radius: var(--box-radius);
-    }
-    
-    .saet-top {
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        align-items: center;
-        flex: 1;
-        width: 0;
-    }
-    
-    /* navs */
-    .saet-top .navs {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        height: 48px;
-        background-color: var(--el-bg-color);
-        border-radius: var(--layout-float-radius);
-    }
-    
-    .saet-top .navs .left .collapse-btn {
-        height: 100%;
-    }
-    
-    .saet-top .navs .left .collapse-btn {
-        padding: 0 15px;
-        font-size: 18px;
-    }
-    
-    .saet-top .navs .left .collapse-btn .is-collapse {
-        transform: rotate(-180deg);
-    }
-    
-    .saet-top .navs .right {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        align-items: center;
-    }
-    
-    .saet-top .navs .right .info {
-        margin-left: 5px;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .saet-top .navs .right .el-button.avatar {
-        padding: 4px 6px;
-        height: auto;
-    }
-    
-    .saet-top .navs .right .el-button:last-child {
-        margin-right: 8px;
-    }
-    
-    .saet-top .navs .right .info .nickname {
-        font-size: 12px;
-        max-width: 60px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        transform: scale(.94);
-    }
-    
-    .saet-top .navs .right .info .username {
-        font-size: 12px;
-        margin-top: 1px;
-        transform: scale(.88);
-        color: var(--el-text-color-secondary);
-    
-    }
-    
-    .saet-top .navs .right .el-button+.el-button {
-        margin-left: 8px;
-    }
-    
-    
-    .side-top .el-drawer__header {
-        margin-bottom: 0px;
-    }
-    
-    
-    /* tabs */
-    .saet-top .el-tabs {
-        --el-tabs-header-height: 28px;
-        padding: 0 12px !important;
-    }
-    
-    .saet-top .tabs-box {
-        display: flex;
-        padding-left: 10px;
-        display: flex;
-        overflow-y: hidden;
-        scrollbar-width: none;
-    }
-    
-    .saet-top .tabs-box::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .saet-top .tabs-box .item {
-        width: 150px;
-        min-width: 150px;
-        height: 34px;
-        position: relative;
-        margin-right: -20px;
-        cursor: pointer;
-        animation: tt 200ms;
-    }
-    
-    @keyframes tt {
-        0% {
-            transform: translateY(100%);
-            opacity: 0;
-        }
-    
-        100% {
-            opacity: 1;
-            transform: translateY(0%);
-    
-        }
-    }
-    
-    .saet-top .tabs-box .item .tab-content {
-        position: absolute;
-        top: 0px;
-        width: 150px;
-        height: 34px;
-        line-height: 32px;
-        right: -21px;
-        font-size: 14px;
-        z-index: 3;
-    }
-    
-    .saet-top .tabs-box .item .tab-content .title {
-        mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 55px), transparent);
-        -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 55px), transparent);
-        white-space: nowrap;
-        width: 100px;
-        color: var(--el-text-color-placeholder);
-    }
-    
-    .saet-top .tabs-box .item.active .tab-content .title {
-        color: var(--el-text-color-primary);
-    }
-    
-    .saet-top .tabs-box .item .line {
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 11px;
-        bottom: 0;
-        width: 1px;
-        opacity: 1;
-        background-color: var(--el-text-color-placeholder);
-        height: 14px;
-        margin: auto;
-    }
-    
-    .saet-top .tabs-box .active+.item .line,
-    .saet-top .tabs-box .item:hover .line {
+<style>
+.el-drawer__body {
+    padding: 0px;
+}
+
+.side-top {
+    --top-right-width: 320px;
+    display: flex;
+}
+
+.side-top .el-button {
+    border-radius: var(--box-radius);
+}
+
+.saet-top {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+    flex: 1;
+    width: 0;
+}
+
+/* navs */
+.saet-top .navs {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 48px;
+    background-color: var(--el-bg-color);
+    border-radius: var(--layout-float-radius);
+}
+
+.saet-top .navs .left .collapse-btn {
+    height: 100%;
+}
+
+.saet-top .navs .left .collapse-btn {
+    padding: 0 15px;
+    font-size: 18px;
+}
+
+.saet-top .navs .left .collapse-btn .is-collapse {
+    transform: rotate(-180deg);
+}
+
+.saet-top .navs .right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.saet-top .navs .right .info {
+    margin-left: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.saet-top .navs .right .el-button.avatar {
+    padding: 4px 6px;
+    height: auto;
+}
+
+.saet-top .navs .right .el-button:last-child {
+    margin-right: 8px;
+}
+
+.saet-top .navs .right .info .nickname {
+    font-size: 12px;
+    max-width: 60px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transform: scale(.94);
+}
+
+.saet-top .navs .right .info .username {
+    font-size: 12px;
+    margin-top: 1px;
+    transform: scale(.88);
+    color: var(--el-text-color-secondary);
+
+}
+
+.saet-top .navs .right .el-button+.el-button {
+    margin-left: 8px;
+}
+
+
+.side-top .el-drawer__header {
+    margin-bottom: 0px;
+}
+
+
+/* tabs */
+.saet-top .el-tabs {
+    --el-tabs-header-height: 28px;
+    padding: 0 12px !important;
+}
+
+.saet-top .tabs-box {
+    display: flex;
+    padding-left: 10px;
+    display: flex;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+.saet-top .tabs-box::-webkit-scrollbar {
+    display: none;
+}
+
+.saet-top .tabs-box .item {
+    width: 150px;
+    min-width: 150px;
+    height: 34px;
+    position: relative;
+    margin-right: -20px;
+    cursor: pointer;
+    animation: tt 200ms;
+}
+
+@keyframes tt {
+    0% {
+        transform: translateY(100%);
         opacity: 0;
     }
-    
-    .saet-top .tabs-box .item .tab-bg {
-        display: flex;
-        position: absolute;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        pointer-events: none;
-    }
-    
-    .saet-top .tabs-box .item.active .tab-bg {
-        z-index: 2;
-    }
-    
-    
-    .saet-top .tabs-box .item .tab-bg svg {
-        fill: var(--el-bg-color);
-        opacity: 0;
-        transition: opacity 100ms;
-    }
-    
-    
-    .saet-top .tabs-box .item.active .tab-bg svg {
-        /* fill: var(--el-bg-color); */
+
+    100% {
         opacity: 1;
+        transform: translateY(0%);
+
     }
-    
-    
-    .saet-top .tabs-box .item:not(.active):hover .tab-bg svg {
-        opacity: 0.7;
-    }
-    
-    .saet-top .tabs-box .item .is-icon-close {
-        position: absolute;
-        right: 16px;
-        z-index: 4;
-        line-height: 34px;
-        font-size: 10px;
-        width: 18px;
-        height: 18px;
-        border-radius: 18px;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-    }
-    
-    .saet-top .tabs-box .item .is-icon-close:hover {
-        background-color: var(--el-color-info-light-8);
-    }
-    
-    .saet-top .el-tabs__item:last-child {
-        margin-right: 0;
-    }
-    
-    .saet-top .el-tabs__active-bar {
-        height: 35px;
-        z-index: -1;
-        border-radius: 6px;
-    }
-    
-    .saet-top .el-tabs__nav-wrap::after {
-        height: 0;
-    }
-    
-    .saet-top .el-tabs__header {
-        margin: 0;
-    }
-    
-    .saet-top .el-tabs__item.is-active {
-        color: var(--el-color-white);
-        transition: color .5s;
-    }
-    
-    
-    .saet-top .theme-toggler {
-        height: 20px;
-        margin-right: 12px;
-    }
-    
-    .saet-top .switch {
-        margin: 0;
-        display: inline-block;
-        position: relative;
-        width: 40px;
-        height: 20px;
-        border: 1px solid var(--el-border-color);
-        outline: none;
-        border-radius: 10px;
-        box-sizing: border-box;
-        background: var(--el-border-color);
-        cursor: pointer;
-        transition: border-color var(--el-transition-duration), background-color var(--el-transition-duration);
-    }
-    
-    html.dark .saet-top .switch__action {
-        transform: translate(20px);
-    }
-    
-    .saet-top .switch__action,
-    .saet-top .switch__icon {
-        width: 16px;
-        height: 16px;
-    }
-    
-    .saet-top .switch__action {
-        position: absolute;
-        top: 1px;
-        left: 1px;
-        border-radius: 50%;
-        background-color: var(--el-bg-color);
-        transform: translate(0);
-        transition: border-color var(--el-transition-duration), background-color var(--el-transition-duration), transform var(--el-transition-duration);
-    }
-    
-    .saet-top .switch__icon {
-        position: relative;
-    }
-    
-    .saet-top .switch__icon .el-icon {
-        position: absolute;
-        left: 1px;
-        bottom: 1px;
-    }
-    
-    .saet-top .dark-icon {
-        opacity: 0;
-    }
-    
-    .saet-top .light-icon {
-        opacity: 1;
-    }
-    
-    html.dark .saet-top .dark-icon {
-        opacity: 1;
-    }
-    
-    html.dark .saet-top .light-icon {
-        opacity: 0;
-    }
-    
-    .saet-top .dark-icon,
-    .saet-top .light-icon {
-        transition: color var(--el-transition-duration), opacity var(--el-transition-duration);
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-    
-    
-    
-    .admin-info .info {
-        width: 220px;
-        background-color: var(--el-fill-color-light);
-        border-radius: 5px;
-        padding: 10px;
-    }
-    
-    .st-style {
-        position: relative;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .st-style .box {
-        margin-bottom: 26px;
-    }
-    
-    .st-style .title {
-        font-size: 14px;
-    }
-    
-    .st-style .info {
-        font-size: 13px;
-        color: var(--el-color-info);
-    }
-    
-    /* 主题 */
-    .st-style .theme {
-        display: flex;
-    }
-    
-    .st-style .box .theme .el-image {
-        width: 66px;
-        height: 42px;
-        border-radius: 7px;
-        border: 1px solid var(--el-border-color-light);
-    }
-    
-    .st-style .box .theme .item .image {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        padding: 4px;
-    }
-    
-    .st-style .box .theme .item .desc {
-        font-size: 12px;
-        text-align: center;
-        color: var(--el-text-color-primary);
-        margin-top: 6px;
-    }
-    
-    .st-style .box .theme .item.active .image:after {
-        content: '';
-        border: 2.5px solid var(--el-color-primary);
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        border-radius: 8px;
-    }
-    
-    .st-style .box .theme .item+.item {
-        margin-left: 12px;
-    }
-    
-    .st-style .box .color .item+.item {
-        margin-left: 10px;
-    }
-    
-    
-    .st-style .footer {
-        position: sticky;
-        display: flex;
-        bottom: 0;
-        background: var(--el-bg-color);
-        padding-top: 20px;
-    }
-    
-    /* 颜色风格 */
-    .st-style .box .color {
-        display: flex;
-        flex-direction: row;
-    }
-    
-    .st-style .box .color .item {
-        width: 16px;
-        height: 16px;
-        border-radius: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: var(--el-color-primary);
-        border: 3px solid var(--el-color-primary-light-7);
-        transition: width .3s;
-    }
-    
-    .st-style .box .color .item.active {
-        width: 24px;
-    }
-    
-    .st-style .box .color .active::after {
-        content: '';
-        width: 6px;
-        height: 6px;
-        border-radius: 20px;
-        background-color: #ffffff;
-    }
-    
-    /* 布局 */
-    .st-style .box .layout .item {
-        position: relative;
-    }
-    
-    .st-style .box .layout .active .item {
-        --el-border-color: var(--el-color-primary);
-    }
-    
-    .st-style .box .layout .title {
-        width: 100%;
-        margin-top: 5px;
-        text-align: center;
-        color: var(--el-text-color-secondary);
-        font-size: 13px;
-    }
-    
-    .st-style .box .layout .active .title {
-        color: var(--el-color-primary) !important;
-    }
-    
-    /* 菜单风格 */
-    .st-style .box .nav {
-        justify-content: space-around;
-        flex-wrap: wrap;
-    }
-    
-    .st-style .box .nav .item {
-        width: 90px;
-        height: 56px;
-        padding: 8px;
-        display: flex;
-        border-radius: 6px;
-        box-shadow: 0 0 5px 1px var(--el-border-color-lighter);
-        margin-bottom: 20px;
-    }
-    
-    .st-style .box .nav .item:not(.active):hover {
-        box-shadow: 0 0 5px 1px var(--el-border-color-darker) !important;
-    }
-    
-    .st-style .box .nav .item.active {
-        /* box-shadow: 0 0 5px 1px var(--el-color-primary); */
-        border: 2px solid var(--el-color-primary);
-        padding: 6px;
-    }
-    
-    .st-style .box .nav .item .left {
-        height: 100%;
-        background-color: var(--el-color-primary);
-        border-radius: 2px;
-        margin-right: 5px;
-    }
-    
-    .st-style .box .nav .item .side {
-        display: flex;
-    }
-    
-    .st-style .box .nav .item .side .side-1 {
-        width: 10px;
-        height: 100%;
-        background-color: var(--el-color-primary);
-        margin-right: 5px;
-        border-radius: 2px;
-    
-    }
-    
-    .st-style .box .nav .item .side .side-2 {
-        height: 100%;
-        background-color: var(--el-color-primary-light-3);
-        margin-right: 5px;
-        border-radius: 2px;
-    
-    }
-    
-    .st-style .box .nav .item .right {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .st-style .box .nav .item .head {
-        background-color: var(--el-color-primary-light-3);
-        width: 100%;
-        height: 12px;
-        /* border-bottom: 1px solid var(--el-border-color); */
-        border-radius: 2px;
-        margin-bottom: 5px;
-    
-    }
-    
-    .st-style .box .nav .item .body {
-        background-color: var(--el-color-primary-light-7);
-        width: 100%;
-        flex: 1;
-        border-radius: 2px;
-        border: 1px dashed var(--el-color-primary);
-    }
-    
-    /* 面包屑 */
-    .el-breadcrumb.style-1 .el-breadcrumb__item:first-child:not(:last-child) .el-breadcrumb__inner {
-        padding-left: 12px;
-        border-radius: 6px 0 0 6px;
-        clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
-    }
-    
-    .el-breadcrumb.style-1 .el-breadcrumb__item .el-breadcrumb__inner {
-        cursor: pointer;
-        display: inline-block;
-        background-color: var(--el-fill-color);
-        transition: background-color .3s, var(--el-transition-color);
-        padding: 8px 16px;
-        clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%);
-    }
-    
-    .el-breadcrumb.style-1 .el-breadcrumb__item .el-breadcrumb__separator {
-        display: none;
-    }
-    
-    .el-breadcrumb {
-        flex: 1;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-    </style>
+}
+
+.saet-top .tabs-box .item .tab-content {
+    position: absolute;
+    top: 0px;
+    width: 150px;
+    height: 34px;
+    line-height: 32px;
+    right: -21px;
+    font-size: 14px;
+    z-index: 3;
+}
+
+.saet-top .tabs-box .item .tab-content .title {
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 55px), transparent);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 55px), transparent);
+    white-space: nowrap;
+    width: 100px;
+    color: var(--el-text-color-placeholder);
+}
+
+.saet-top .tabs-box .item.active .tab-content .title {
+    color: var(--el-text-color-primary);
+}
+
+.saet-top .tabs-box .item .line {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 11px;
+    bottom: 0;
+    width: 1px;
+    opacity: 1;
+    background-color: var(--el-text-color-placeholder);
+    height: 14px;
+    margin: auto;
+}
+
+.saet-top .tabs-box .active+.item .line,
+.saet-top .tabs-box .item:hover .line {
+    opacity: 0;
+}
+
+.saet-top .tabs-box .item .tab-bg {
+    display: flex;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.saet-top .tabs-box .item.active .tab-bg {
+    z-index: 2;
+}
+
+
+.saet-top .tabs-box .item .tab-bg svg {
+    fill: var(--el-bg-color);
+    opacity: 0;
+    transition: opacity 100ms;
+}
+
+
+.saet-top .tabs-box .item.active .tab-bg svg {
+    /* fill: var(--el-bg-color); */
+    opacity: 1;
+}
+
+
+.saet-top .tabs-box .item:not(.active):hover .tab-bg svg {
+    opacity: 0.7;
+}
+
+.saet-top .tabs-box .item .is-icon-close {
+    position: absolute;
+    right: 16px;
+    z-index: 4;
+    line-height: 34px;
+    font-size: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 18px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.saet-top .tabs-box .item .is-icon-close:hover {
+    background-color: var(--el-color-info-light-8);
+}
+
+.saet-top .el-tabs__item:last-child {
+    margin-right: 0;
+}
+
+.saet-top .el-tabs__active-bar {
+    height: 35px;
+    z-index: -1;
+    border-radius: 6px;
+}
+
+.saet-top .el-tabs__nav-wrap::after {
+    height: 0;
+}
+
+.saet-top .el-tabs__header {
+    margin: 0;
+}
+
+.saet-top .el-tabs__item.is-active {
+    color: var(--el-color-white);
+    transition: color .5s;
+}
+
+
+.saet-top .theme-toggler {
+    height: 20px;
+    margin-right: 12px;
+}
+
+.saet-top .switch {
+    margin: 0;
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 20px;
+    border: 1px solid var(--el-border-color);
+    outline: none;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: var(--el-border-color);
+    cursor: pointer;
+    transition: border-color var(--el-transition-duration), background-color var(--el-transition-duration);
+}
+
+html.dark .saet-top .switch__action {
+    transform: translate(20px);
+}
+
+.saet-top .switch__action,
+.saet-top .switch__icon {
+    width: 16px;
+    height: 16px;
+}
+
+.saet-top .switch__action {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    border-radius: 50%;
+    background-color: var(--el-bg-color);
+    transform: translate(0);
+    transition: border-color var(--el-transition-duration), background-color var(--el-transition-duration), transform var(--el-transition-duration);
+}
+
+.saet-top .switch__icon {
+    position: relative;
+}
+
+.saet-top .switch__icon .el-icon {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.saet-top .ri-moon-fill {
+    opacity: 0;
+}
+
+.saet-top .ri-sun-fill {
+    opacity: 1;
+}
+
+html.dark .saet-top .ri-moon-fill {
+    opacity: 1;
+}
+
+html.dark .saet-top .ri-sun-fill {
+    opacity: 0;
+}
+
+.saet-top .ri-moon-fill,
+.saet-top .ri-sun-fill {
+    transition: color var(--el-transition-duration-fast), opacity var(--el-transition-duration-fast);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+
+.admin-info .info {
+    width: 220px;
+    background-color: var(--el-fill-color-light);
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.st-style {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.st-style .box {
+    margin-bottom: 26px;
+}
+
+.st-style .title {
+    font-size: 14px;
+}
+
+.st-style .info {
+    font-size: 13px;
+    color: var(--el-color-info);
+}
+
+/* 主题 */
+.st-style .theme {
+    display: flex;
+}
+
+.st-style .box .theme .el-image {
+    width: 66px;
+    height: 42px;
+    border-radius: 7px;
+    border: 1px solid var(--el-border-color-light);
+}
+
+.st-style .box .theme .item .image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 4px;
+}
+
+.st-style .box .theme .item .desc {
+    font-size: 12px;
+    text-align: center;
+    color: var(--el-text-color-primary);
+    margin-top: 6px;
+}
+
+.st-style .box .theme .item.active .image:after {
+    content: '';
+    border: 2.5px solid var(--el-color-primary);
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.st-style .box .theme .item+.item {
+    margin-left: 12px;
+}
+
+.st-style .box .color .item+.item {
+    margin-left: 10px;
+}
+
+
+.st-style .footer {
+    position: sticky;
+    display: flex;
+    bottom: 0;
+    background: var(--el-bg-color);
+    padding-top: 20px;
+}
+
+/* 颜色风格 */
+.st-style .box .color {
+    display: flex;
+    flex-direction: row;
+}
+
+.st-style .box .color .item {
+    width: 16px;
+    height: 16px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--el-color-primary);
+    border: 3px solid var(--el-color-primary-light-7);
+    transition: width .3s;
+}
+
+.st-style .box .color .item.active {
+    width: 24px;
+}
+
+.st-style .box .color .active::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 20px;
+    background-color: #ffffff;
+}
+
+/* 布局 */
+.st-style .box .layout .item {
+    position: relative;
+}
+
+.st-style .box .layout .active .item {
+    --el-border-color: var(--el-color-primary);
+}
+
+.st-style .box .layout .title {
+    width: 100%;
+    margin-top: 5px;
+    text-align: center;
+    color: var(--el-text-color-secondary);
+    font-size: 13px;
+}
+
+.st-style .box .layout .active .title {
+    color: var(--el-color-primary) !important;
+}
+
+/* 菜单风格 */
+.st-style .box .nav {
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.st-style .box .nav .item {
+    width: 90px;
+    height: 56px;
+    padding: 8px;
+    display: flex;
+    border-radius: 6px;
+    box-shadow: 0 0 5px 1px var(--el-border-color-lighter);
+    margin-bottom: 20px;
+}
+
+.st-style .box .nav .item:not(.active):hover {
+    box-shadow: 0 0 5px 1px var(--el-border-color-darker) !important;
+}
+
+.st-style .box .nav .item.active {
+    /* box-shadow: 0 0 5px 1px var(--el-color-primary); */
+    border: 2px solid var(--el-color-primary);
+    padding: 6px;
+}
+
+.st-style .box .nav .item .left {
+    height: 100%;
+    background-color: var(--el-color-primary);
+    border-radius: 2px;
+    margin-right: 5px;
+}
+
+.st-style .box .nav .item .side {
+    display: flex;
+}
+
+.st-style .box .nav .item .side .side-1 {
+    width: 10px;
+    height: 100%;
+    background-color: var(--el-color-primary);
+    margin-right: 5px;
+    border-radius: 2px;
+
+}
+
+.st-style .box .nav .item .side .side-2 {
+    height: 100%;
+    background-color: var(--el-color-primary-light-3);
+    margin-right: 5px;
+    border-radius: 2px;
+
+}
+
+.st-style .box .nav .item .right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.st-style .box .nav .item .head {
+    background-color: var(--el-color-primary-light-3);
+    width: 100%;
+    height: 12px;
+    /* border-bottom: 1px solid var(--el-border-color); */
+    border-radius: 2px;
+    margin-bottom: 5px;
+
+}
+
+.st-style .box .nav .item .body {
+    background-color: var(--el-color-primary-light-7);
+    width: 100%;
+    flex: 1;
+    border-radius: 2px;
+    border: 1px dashed var(--el-color-primary);
+}
+
+/* 面包屑 */
+.el-breadcrumb.style-1 .el-breadcrumb__item:first-child:not(:last-child) .el-breadcrumb__inner {
+    padding-left: 12px;
+    border-radius: 6px 0 0 6px;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+}
+
+.el-breadcrumb.style-1 .el-breadcrumb__item .el-breadcrumb__inner {
+    cursor: pointer;
+    display: inline-block;
+    background-color: var(--el-fill-color);
+    transition: background-color .3s, var(--el-transition-color);
+    padding: 8px 16px;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%);
+}
+
+.el-breadcrumb.style-1 .el-breadcrumb__item .el-breadcrumb__separator {
+    display: none;
+}
+
+.el-breadcrumb {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+}
+</style>

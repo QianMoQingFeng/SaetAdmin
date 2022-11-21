@@ -1,6 +1,6 @@
 <template id="st-config">
-    <el-form class="st-config" :model="formData" ref="form" :rules="rules" label-width="120px" label-position="left"
-        :inline="false" size="normal">
+    <el-form class="st-config" :model="formData" ref="form" :rules="rules" label-width="120px"
+        :label-position="position" :inline="false" size="normal">
         <template v-for="row in list">
             <el-form-item prop="account" v-if="typeof (row.visible) == 'undefined' ? row.visible = true : row.visible">
                 <template #label>
@@ -107,7 +107,9 @@ SaetComponent({
                 context.emit('success', null)
             })
         }
-        return { sure, back, loading, reset, edit, del, formData }
+        const position = ref('left')
+        if (window.innerWidth < 500 ) position.value = 'top'
+        return { sure, back, loading, reset, edit, del, formData, position }
     }
 })
 </script>

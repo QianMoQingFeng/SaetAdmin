@@ -1,7 +1,7 @@
 <template>
     <div>
-        <saet-table :list="ST.list" :total="ST.total" :fields="fields" :config="config">
-        </saet-table>
+        <st-table :list="ST.list" :total="ST.total" :fields="fields" :config="config">
+        </st-table>
     </div>
 </template>
 
@@ -17,7 +17,7 @@ new SaetApp({
         const fields = [
             { case: 'selection' },
             { name: 'aid', title: '管理员ID' },
-            { name: 'user_name', title: '用户名' },
+            { name: 'username', title: '用户名' },
             { name: 'nick_name', title: '昵称' },
             { name: 'avatar', title: '头像', case: 'image', search: false },
             { name: 'email', title: '邮箱' },

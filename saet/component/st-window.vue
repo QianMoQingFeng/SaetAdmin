@@ -67,7 +67,7 @@
     </div>
 </template>
 <script type="module">
-import { store } from '/addons/admin/js/store.js'
+import { store } from '/app_static/admin/js/store.js'
 
 const windowDefault = {
     title: 'Saet',
@@ -129,7 +129,6 @@ const windowTool = {
 }
 
 St.window = windowTool
-console.log(window);
  SaetComponent({
     name: 'st-window',
     template: '#st-window',

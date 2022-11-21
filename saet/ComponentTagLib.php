@@ -54,12 +54,13 @@ class ComponentTagLib extends TagLib
                 '/static/saet/css/common.min.css'
             ],
             'rely' => ['vue', 'element-plus']
-        ]
+        ],
     ];
 
     public function __construct($template)
     {
 
+        
         parent::__construct($template);
         foreach (scandir(__DIR__ . '/component') as $key => $value) {
             $isVue = \think\helper\Str::endsWith($value, '.vue');

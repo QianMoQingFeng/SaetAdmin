@@ -4,7 +4,9 @@ namespace app\admin\library;
 
 use app\admin\model\admin\Admin;
 use app\admin\model\admin\Group as AdminGroup;
+use app\admin\validate\Admin as ValidateAdmin;
 use app\common\library\Token;
+use think\exception\ValidateException;
 use think\facade\Cookie;
 use think\facade\Validate;
 
@@ -14,11 +16,10 @@ class AdminAuth
     protected $admin;
     protected $token;
     protected $expireTime = 2626560;
-    protected $allowFields = ['aid', 'avatar', 'user_name', 'nick_name', 'user_name', 'groups', 'rule_ids']; //true 表示全部允许
+    protected $allowFields = ['aid', 'avatar', 'username', 'nickname', 'groups', 'rule_ids']; //true 表示全部允许
     protected $isSuper = false;
     public function __construct()
     {
-
     }
 
     public static function instance($options = [])
@@ -48,11 +49,11 @@ class AdminAuth
 
     public function login($account, $password)
     {
-        $field = Validate::is($account, 'email') ? 'email' : (Validate::regex($account, '/^1\d{10}$/') ? 'mobile' : 'user_name');
+        $field = Validate::is($account, 'email') ? 'email' : (Validate::regex($account, '/^1\d{10}$/') ? 'mobile' : 'username');
         $admin = Admin::where([$field => $account])->find();
         if ($admin) {
             $passLen = strlen($password);
-            if ($admin->password != $this->getEncryptPassword($password, $admin->salt) && $passLen < 30) {
+            if ($admin->password != self::getEncryptPassword($password, $admin->salt) && $passLen < 30) {
                 return $this->setError('Password is incorrect');
             }
             if ($passLen >= 30) {
@@ -85,14 +86,33 @@ class AdminAuth
         return $res;
     }
 
+
+    public static function register($info)
+    {
+        try {
+            validate(ValidateAdmin::class)->check($info);
+        } catch (ValidateException $e) {
+            return ['code' => 0, 'msg' => $e->getError()];
+        }
+        extract($info);
+        $info['salt'] = \think\helper\Str::random(8, 2, '0123456789');
+        $info['password'] = self::getEncryptPassword($info['password'], $info['salt']);
+        $admim = new Admin;
+        $res = $admim->save($info);
+        if (!$res) {
+            return ['code' => 0, 'msg' => '管理员写入失败'];
+        }
+        return ['code' => 1];
+    }
+
     /**
      * 直接登录账号
-     * @param int $adminId
+     * @param int $aid
      * @return boolean
      */
-    public function easyLogin($adminId)
+    public function easyLogin($aid)
     {
-        $admin = Admin::find($adminId);
+        $admin = Admin::find($aid);
         if ($admin) {
             // $admin['token'] = $this->token;
             $this->admin = $admin;
@@ -119,7 +139,8 @@ class AdminAuth
                 $admininfo = array_intersect_key($data, array_flip($this->allowFields));
             }
         }
-        $admininfo = array_merge($admininfo, ['token' => $this->token,'groups'  => $this->getGroups(),'rule_ids'  => $this->getRuleIds()]);
+        $admininfo = array_merge($admininfo, ['token' => $this->token, 'groups'  => $this->getGroups(), 'rule_ids'  => $this->getRuleIds()]);
+
         return $admininfo;
     }
 
@@ -181,15 +202,10 @@ class AdminAuth
     public function checkAction($arr = [])
     {
         $arr = is_array($arr) ? $arr : explode(',', $arr);
-        if (!$arr) {
-            return false;
-        }
+        if (!$arr) return false;
         $arr = array_map('strtolower', $arr);
         // 是否存在
-        if (in_array(strtolower(request()->action()), $arr) || in_array('*', $arr)) {
-            return true;
-        }
-
+        if (in_array(strtolower(request()->action()), $arr) || in_array('*', $arr)) return true;
         // 没找到匹配
         return false;
     }
@@ -205,7 +221,7 @@ class AdminAuth
      * @param string $salt     密码盐
      * @return string
      */
-    public function getEncryptPassword($password, $salt = '')
+    public static function getEncryptPassword($password, $salt = '')
     {
         return sha1(sha1($password) . $salt);
     }

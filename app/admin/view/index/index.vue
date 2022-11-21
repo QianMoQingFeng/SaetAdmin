@@ -14,25 +14,13 @@
     {include file="/index/components/sub-menu" /}
 
 <script type="module">
-import {store} from '/addons/admin/js/store.js'
+
+import { store } from '/app_static/admin/js/store.js'
 
 new SaetApp({
-    data() {
-        return {
-                 loadEnd: false,
-        };
-    },
-    created() {
-        setTimeout(() => {
-            this.loadEnd = true;
-        }, 500);
-        setTimeout(() => {
-            // loading.close()
-        }, 1000);
-    },
     setup() {
-        if (window.innerWidth < 991) store.adminTheme.menu.minimize = true
         const adminTheme = reactive(store.adminTheme);
+        if (window.innerWidth < 700 && adminTheme.menu.minisize_auto) { adminTheme.menu.minimize = true; adminTheme.menu.menu_float = true; }
         return { adminTheme }
     },
     mounted() {

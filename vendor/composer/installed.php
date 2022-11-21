@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'e92a47cc268eddcf484a7f7e9d963fc1cdda3c6f',
+        'reference' => '71031aa1ff91af7910fe7575c552202f8d60a173',
         'name' => 'topthink/think',
         'dev' => true,
     ),
@@ -83,12 +83,12 @@
             'dev_requirement' => false,
         ),
         'qianmoqingfeng/think-addons' => array(
-            'pretty_version' => 'v3.0.2',
-            'version' => '3.0.2.0',
+            'pretty_version' => 'v3.0.3',
+            'version' => '3.0.3.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../qianmoqingfeng/think-addons',
             'aliases' => array(),
-            'reference' => '4b30d84242d1bef0b08528aea130a6a8db0db935',
+            'reference' => '6d916e769d72bd07edb0c8fdcffc56efa7a40f07',
             'dev_requirement' => false,
         ),
         'symfony/polyfill-mbstring' => array(
@@ -142,7 +142,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'e92a47cc268eddcf484a7f7e9d963fc1cdda3c6f',
+            'reference' => '71031aa1ff91af7910fe7575c552202f8d60a173',
             'dev_requirement' => false,
         ),
         'topthink/think-helper' => array(

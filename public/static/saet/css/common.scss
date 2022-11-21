@@ -3,6 +3,14 @@
 	-webkit-text-size-adjust: none;
 }
 
+// 兼容el-message 小屏
+@media only screen and (max-width: 400px) {
+    .el-message {
+        min-width: calc(100% - 24px) !important;
+    }
+}
+
+
 @keyframes twinkle {
 	0% {
 		transform: scale(.8)
@@ -153,6 +161,9 @@ html,
 	}
 }
 
+
+
+
 .st-flex {
 	display: flex;
 	flex-direction: row;
@@ -254,4 +265,108 @@ html,
 			background-color: var(--el-color-success);
 		}
 	}
+}
+
+// Break-point
+$sm: 768px !default;
+$md: 992px !default;
+$lg: 1200px !default;
+$xl: 1920px !default;
+
+$breakpoints: (
+	'xs': '(max-width: #{$sm})',
+	'sm': '(min-width: #{$sm})',
+	'md': '(min-width: #{$md})',
+	'lg': '(min-width: #{$lg})',
+	'xl': '(min-width: #{$xl})',
+	) !default;
+
+$breakpoints-spec: (
+	'xs-only': '(max-width: #{$sm - 1})',
+	'sm-and-up': '(min-width: #{$sm})',
+	'sm-only': '(min-width: #{$sm}) and (max-width: #{$md - 1})',
+	'sm-and-down': '(max-width: #{$md - 1})',
+	'md-and-up': '(min-width: #{$md})',
+	'md-only': '(min-width: #{$md}) and (max-width: #{$lg - 1})',
+	'md-and-down': '(max-width: #{$lg - 1})',
+	'lg-and-up': '(min-width: #{$lg})',
+	'lg-only': '(min-width: #{$lg}) and (max-width: #{$xl - 1})',
+	'lg-and-down': '(max-width: #{$xl - 1})',
+	'xl-only': '(min-width: #{$xl})',
+	) !default;
+
+// Break-points
+@mixin res($key, $map: $breakpoints) {
+
+	// loop breakpoint Map, return if present
+	@if map-has-key($map, $key) {
+		@media only screen and #{unquote(map-get($map, $key))} {
+			@content;
+		}
+	}
+
+	@else {
+		@warn "Undefined points: `#{$map}`";
+	}
+}
+
+.hidden {
+
+	@each $break-point-name,
+	$value in $breakpoints-spec {
+		&-#{$break-point-name} {
+			@include res($break-point-name, $breakpoints-spec) {
+				display: none !important;
+			}
+		}
+	}
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 5px;
+	background-color: var(--el-border-color-dark
+	);
+}
+
+
+html,
+body {
+  background-color: var(--el-bg-color-page);
+  transition: background-color 300ms;
+}
+
+/* 兼容组件支持effect属性的夜间主题 */
+// .is-dark.el-popover {
+//   --el-popover-title-text-color: var(--el-bg-color);
+// }
+
+/* 兼容调试模式的夜晚模式 */
+html.dark .exception .source-code {
+  background-color: var(--el-bg-color-page);
+}
+
+html.dark pre.prettyprint .pln {
+  color: var(--el-color-info-light-3);
+}
+
+html.dark pre.prettyprint .kwd {
+  color: var(--el-color-warning);
+}
+
+html.dark pre.prettyprint .line-error .pln {
+  color: var(--el-bg-color);
+}
+
+html.dark body {
+  color: var(--el-text-color-primary);
+}
+
+pages {
+  display: flex;
+  height: 100%;
 }

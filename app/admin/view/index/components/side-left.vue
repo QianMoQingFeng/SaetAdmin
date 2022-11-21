@@ -1,8 +1,9 @@
 <template  id="side-left">
-    <div class="minimize-mask" @click="adminTheme.menu.minimize = true"
+    <div class="minimize-mask" @click="adminTheme.menu.minimize = true" v-if="adminTheme.menu.menu_float"
         :class="{ 'is-open': !adminTheme.menu.minimize }">
     </div>
-    <aside :class="['side-left', adminTheme.menu_type, { 'is-minimize': adminTheme.menu.minimize }]">
+    <aside
+        :class="['side-left', { 'is-minimize': adminTheme.menu.minimize }, { 'menu-float': adminTheme.menu.menu_float }]">
         <div class="side1"
             :class="[{ 'is-collapse': (adminTheme.menu_type == 'main-sub' ? true : adminTheme.menu.collapse) }]">
             <div style="margin-top: 20px;"></div>
@@ -31,8 +32,8 @@
                         fit="fill"></el-avatar>
                 </div>
                 <div class="info">
-                    <span class="nickname">{{ ST.admin.nick_name }}</span>
-                    <span class="username">{{ ST.admin.user_name }}</span>
+                    <span class="nickname">{{ ST.admin.nickname }}</span>
+                    <span class="username">{{ ST.admin.username }}</span>
                 </div>
             </div>
             <!-- 菜单搜索 -->
@@ -114,10 +115,10 @@
 </template>
  
 <script type="module">
-import {store} from '/addons/admin/js/store.js'
+import { store } from '/app_static/admin/js/store.js'
 store.adminTheme.menu_type = 'main';
-console.log(store.adminTheme.menu_type);
- SaetComponent({
+
+SaetComponent({
     name: 'side-left',
     template: '#side-left',
     setup(props, context) {
@@ -135,12 +136,17 @@ console.log(store.adminTheme.menu_type);
             return r
         })
 
-
         window.addEventListener('resize', () => {
-            if (window.innerWidth < 990) {
-                adminTheme.menu.minimize = true
-            } else {
-                adminTheme.menu.minimize = false
+            if (adminTheme.menu.minisize_auto) {
+                if (window.innerWidth < 700) {
+                    adminTheme.menu.menu_float = true
+                    adminTheme.menu.minimize = true
+                } else {
+                    adminTheme.menu.menu_float = false
+                    setTimeout(() => {
+                        adminTheme.menu.minimize = false
+                    }, 10);
+                }
             }
         })
 
@@ -243,7 +249,7 @@ console.log(store.adminTheme.menu_type);
         }
         const logout = () => {
             // 登出
-            St.axios.post('admin/logout', this.formData, { loadingToast: true, successToast: true }).then((res) => {
+            St.axios.post('index/logout', this.formData, { loadingToast: true, successToast: true }).then((res) => {
                 setTimeout(() => {
                     window.location.reload();
                 }, 400);
@@ -287,9 +293,6 @@ console.log(store.adminTheme.menu_type);
 .side-left.main-sub>.side1 {
     border-right: solid 1px var(--el-color-info-light-9);
 }
-
-
-
 
 .side1 .el-menu:not(.el-menu--collapse) {
     width: var(--aside-menu-max-width);
@@ -735,60 +738,61 @@ html.dark .side1 .avatar {
 .side-left.is-minimize>.side2 {
     width: 0px;
     min-width: 0;
+    border-right-width: 0px;
 }
 
-@media only screen and (max-width: 991px) {
-    .side-left {
-        position: fixed;
-        left: 0;
-        height: 100vh;
-        z-index: 10000 !important;
-        transition: transform 400ms;
+/* @media only screen and (max-width: 991px) { */
+
+.side-left.menu-float {
+    position: fixed;
+    left: 0;
+    height: 100vh;
+    z-index: 10000 !important;
+    transition: transform 400ms;
+}
+
+.side-left.menu-float.is-minimize {
+    transform: translateX(calc(-100% - var(--layout-float-space)));
+}
+
+.side-left.menu-float.is-minimize>.side1,
+.side-left.menu-float.is-minimize>.side2 {
+    width: fit-content;
+    min-width: auto;
+}
+
+.side-float .side-left.menu-float {
+    height: calc(100% - var(--layout-float-space) * 2);
+    left: var(--layout-float-space);
+}
+
+.minimize-mask.is-open {
+    display: block;
+}
+
+@keyframes minimizeMask {
+    from {
+        opacity: 0;
     }
 
-    .side-left.is-minimize {
-        transform: translateX(calc(-100% - var(--layout-float-space)));
-    }
-
-    .side-left.is-minimize>.side1,
-    .side-left.is-minimize>.side2 {
-        width: fit-content;
-        min-width: auto;
-    }
-
-    .side-float .side-left {
-        /* border-radius: 0px; */
-        height: calc(100% - var(--layout-float-space) * 2);
-        left: var(--layout-float-space);
-    }
-
-    .minimize-mask.is-open {
-        display: block;
-    }
-
-    @keyframes minimizeMask {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: .42;
-        }
-    }
-
-    /* 做一个动画 */
-    .minimize-mask {
-        position: fixed;
-        background: #000;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        display: none;
-        z-index: 9999;
+    to {
         opacity: .42;
-        animation: minimizeMask 500ms;
     }
-
 }
+
+/* 做一个动画 */
+.minimize-mask {
+    position: fixed;
+    background: #000;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    z-index: 2999;
+    opacity: .42;
+    animation: minimizeMask 500ms;
+}
+
+/* } */
 </style>

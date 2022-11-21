@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="cn" class="{//$adminTheme['theme']} {//$adminTheme['color']} ">
+
+<head>
+
+  {include file="../app/index/view/public/assgin.html" /}
+
+  <script>
+    let THEME = ST.adminTheme.theme
+    const htmlDom = document.getElementsByTagName('html')[0]
+
+    // 主题是否通用
+    
+    if (ST.adminTheme.theme == 'system') {
+      THEME = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
+      htmlDom.setAttribute('class', `${THEME} ${ST.adminTheme.color}`)
+    }
+
+  </script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport"
+    content="width=device-width,height=device-height,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>SaetAdmin</title>
+  <script>const LANG = {}</script>
+  <script src="{:LANG_URL}"></script>
+
+  {package is='axios,nprogress,sortable,saet,remixicon'/}
+
+  <script src="/static/package/draggable/vuedraggable.umd.min.js"></script>
+
+</head>
+
+<body>
+  <div id="saetApp"></div>
+  <div id="js-style"></div>
+  <vue>{__CONTENT__}</vue>
+
+  {component is="st-window"/}
+
+  <script type="module">
+
+    useSaetVue();
+
+    // if (self == top && ST.rule != 'index/index' && ST.rule != 'index/login') {
+    //   let headDom = document.head || document.getElementsByTagName('head')[0]
+    //   let style = document.createElement('style');
+    //   style.appendChild(document.createTextNode('body{padding:15px;}'))
+    //   headDom.appendChild(style)
+    // }
+
+
+
+    // iframe 父级 主题切换
+    window.addEventListener('message', function (e) {  // 监听 message 事件
+      htmlDom.setAttribute('class', `${e.data.theme} ${e.data.color}`)
+    });
+
+    // 单窗口主动切换
+    if (ST.adminTheme.theme == 'system') {
+      window.matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', event => {
+          if (event.matches) {
+            htmlDom.setAttribute('class', `dark ${ST.adminTheme.color}`)
+          } else {
+            htmlDom.setAttribute('class', `light ${ST.adminTheme.color}`)
+          }
+        })
+    }
+
+
+  </script>
+
+
+
+</body>
+
+</html>

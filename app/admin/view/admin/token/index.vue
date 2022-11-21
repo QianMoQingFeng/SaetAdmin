@@ -1,6 +1,6 @@
 <template>
     <div>
-        <saet-table :list="ST.list ?? []" :total="ST.total ?? 0" :fields="fields"> </saet-table>
+        <st-table :list="ST.list ?? []" :total="ST.total ?? 0" :fields="fields"> </st-table>
     </div>
 </template>
 

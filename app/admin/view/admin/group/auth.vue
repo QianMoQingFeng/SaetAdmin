@@ -47,10 +47,7 @@ new SaetApp({
 })
 </script>
 <style>
-html,
-body {
-    background-color: white;
-}
+
 
 .el-tree-node.is-expanded>.el-tree-node__children {
     display: flex !important;

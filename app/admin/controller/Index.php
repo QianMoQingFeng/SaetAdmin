@@ -12,7 +12,7 @@ class Index extends AdminBase
 
     protected $noAuth = ['index'];
     protected $noLogin = ['login'];
-
+    protected $noFrame = ['index','login'];
 
     public function index()
     {
@@ -27,7 +27,6 @@ class Index extends AdminBase
 
         if (isset($_SERVER['HTTP_REFERER'])) {
             $referer = explode('.php/', $_SERVER['HTTP_REFERER']);
-           
             if (isset($referer[1]) && $referer[1] != 'index/login') {
                 $openRule = $referer[1];
                 $whyIndex = strpos($openRule, '?');
@@ -70,7 +69,7 @@ class Index extends AdminBase
                     $paramText .= ($paramText ? '&' : '?') . $openUrlParam;
                     $v['nav_url'] = $v['nav_url'] . ($openUrlParam ? '?' : '') . $openUrlParam;
                 }
-                $v['page_url'] = $v['page_url'] . $paramText . ($paramText ? '&self=1' : '?self=1');
+                $v['page_url'] = $v['page_url'] . $paramText . ($paramText ? '&_self=1' : '?_self=1');
 
                 if ($openRule && $v['url'] == $openRule) {
                     $openMenu = $v;
@@ -88,11 +87,10 @@ class Index extends AdminBase
         if (isset($_SERVER['HTTP_REFERER']) && $isRule === false && isset($referer[1]) && $referer[1] != 'index/login') {
             $url = $_SERVER['HTTP_REFERER'];
             if (strpos($url, '?')) {
-                $url = $url . '&self=1';
+                $url = $url . '&_self=1';
             } else {
-                $url = $url . '?self=1';
+                $url = $url . '?_self=1';
             }
-          
             echo "<script type='text/javascript'>window.location.href='$url'</script>";
             die;
         }
@@ -121,6 +119,7 @@ class Index extends AdminBase
     
     public function login($account = null, $password = null)
     {
+
         $refererUrl = $_SERVER['HTTP_REFERER'] ?? $this->request->baseFile() . '/index/index';
        
         $this->assign('refererUrl', $refererUrl);

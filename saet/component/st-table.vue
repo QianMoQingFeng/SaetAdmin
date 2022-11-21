@@ -1,5 +1,5 @@
-<template id="saet-table">
-    <div class="saet-table">
+<template id="st-table">
+    <div class="st-table">
         <el-collapse-transition v-if="config.search">
             <div v-if="config.search.visible" class="search">
                 <el-row>
@@ -214,7 +214,6 @@
                                     <el-button icon="CopyDocument" @click="copyText(row[e.name])"></el-button>
                                 </template>
                             </el-input>
-
                         </template>
                         <!-- switch -->
                         <template v-if="e.case == 'switch'">
@@ -271,8 +270,8 @@
 
  SaetComponent(
     {
-        name: 'saet-table',
-        template: '#saet-table',
+        name: 'st-table',
+        template: '#st-table',
         props: {
             list: Array, fields: Array, config: { type: Object, default: {} }, total: 0, tableDefaultConfig: { type: Object, default: {} }
         },
@@ -417,7 +416,6 @@
                     }
                     o[i] = St.deepAssign(caseConfig, e)
                 }
-                console.log(o);
                 return o
             }
             const fields = reactive(getFields());
@@ -677,7 +675,7 @@
                 }
                 return newObj;
             }
-            console.log('adadadada', {});
+   
             const isset = (i) => {
                 if (typeof i === 'undefined') {
                     return false
@@ -694,35 +692,35 @@
 </script>
 <style>
 /* 选择框 */
-.saet-table .el-table .el-table-column--selection .cell {
+.st-table .el-table .el-table-column--selection .cell {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 /* 树形表格下拉 */
-.saet-table .el-table .case-tree .cell .el-button .el-icon,
+.st-table .el-table .case-tree .cell .el-button .el-icon,
 .head .el-button .el-icon {
     transition: transform 300ms;
 }
 
-.saet-table .el-table .case-tree .cell .el-button.is-expand .el-icon,
+.st-table .el-table .case-tree .cell .el-button.is-expand .el-icon,
 .head .el-button.is-expand .el-icon {
     transform: rotate(180deg);
 }
 
-.saet-table .el-table .case-icon .cell {
+.st-table .el-table .case-icon .cell {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.saet-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__expand-icon,
-.saet-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__indent {
+.st-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__expand-icon,
+.st-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__indent {
     display: none;
 }
 
-.saet-table .el-table .case-tree .cell .el-table__expand-icon {
+.st-table .el-table .case-tree .cell .el-table__expand-icon {
     display: inline-flex;
     background: var(--el-color-primary);
     color: #fff;
@@ -733,77 +731,77 @@
     border-radius: 3px;
 }
 
-.saet-table .cell .el-image {
+.st-table .cell .el-image {
     width: 36px;
     height: 36px;
     border-radius: 3px;
 }
 
-.saet-table .head {
+.st-table .head {
     margin-bottom: 10px;
     flex-wrap: wrap;
     justify-content: space-around;
 }
 
-.saet-table .head>* {
+.st-table .head>* {
     margin-top: 4px;
 }
 
-.saet-table .head .el-button.op-btn {
+.st-table .head .el-button.op-btn {
     padding: 8px 10px;
 }
 
-.saet-table .head .el-button.op-btn [class*=el-icon]+span {
+.st-table .head .el-button.op-btn [class*=el-icon]+span {
     margin-left: 4px;
     font-size: 12px;
 }
 
-.saet-table .head .el-button+.el-button.op-btn {
+.st-table .head .el-button+.el-button.op-btn {
     margin-left: 4px;
 }
 
-.saet-table .el-table {
+.st-table .el-table {
     font-size: 13px;
 }
 
-.saet-table .search input,
-.saet-table input {
+.st-table .search input,
+.st-table input {
     font-size: 12.2px;
 }
 
-.saet-table .search .el-form-item__label {
+.st-table .search .el-form-item__label {
     font-size: 13px;
     width: 72px;
     justify-content: center;
     padding-right: 0px;
 }
 
-.saet-table .search .el-date-editor.el-input,
+.st-table .search .el-date-editor.el-input,
 .el-date-editor.el-input__wrapper {
     width: 100%;
 }
 
-.saet-table .header-row {
+.st-table .header-row {
     color: var(--el-text-color-primary);
 }
 
-.saet-table .case-image .el-image {
+.st-table .case-image .el-image {
     line-height: 36px;
 }
 
-.saet-table .case-operation .el-button.is-circle span,
-.saet-table .case-button .el-button.is-circle span {
+.st-table .case-operation .el-button.is-circle span,
+.st-table .case-button .el-button.is-circle span {
     display: none;
 }
 
 /* 删除动画 */
 
-.saet-table .el-table .el-table__row .el-table__cell {
+.st-table .el-table .el-table__row .el-table__cell {
     transition: all 200ms;
     transition-delay: 300ms;
 }
 
-.saet-table .el-table .el-table__row.del-animation .el-table__cell {
+.st-table .el-table .el-table__row.del-animation .el-table__cell {
     padding: 0px;
 }
 
@@ -828,20 +826,20 @@
 }
 
 /* 选择按钮+树形 */
-.saet-table .el-table .cell .el-table__placeholder {
+.st-table .el-table .cell .el-table__placeholder {
     display: none;
 }
 
-.saet-table .el-table .header-row .el-table__cell {
+.st-table .el-table .header-row .el-table__cell {
     padding: 10px 0;
 }
 
-.saet-table .total-num {
+.st-table .total-num {
     color: var(--el-text-color-secondary);
 }
 
 
-.saet-table .el-table {
+.st-table .el-table {
     border: 1px solid var(--el-table-border-color);
     border-bottom-width: 0px;
 }

@@ -51,7 +51,7 @@
     </el-scrollbar>
 </template>
 <script type="module">
-import {store} from '/addons/admin/js/store.js';
+import {store} from '/app_static/admin/js/store.js';
 console.log('store',store.adminTheme);
  SaetComponent({
     name: 'st-sub-menu',

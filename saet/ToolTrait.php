@@ -6,6 +6,7 @@ use think\Response;
 
 trait ToolTrait
 {
+    
     /**
      * 操作成功返回的数据
      * @param string $msg    提示信息

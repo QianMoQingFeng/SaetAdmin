@@ -4,7 +4,6 @@ declare (strict_types = 1);
 namespace app\admin\controller;
 
 use app\admin\AdminBase;
-
 class Home extends AdminBase
 {
 

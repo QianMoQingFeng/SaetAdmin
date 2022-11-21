@@ -478,17 +478,17 @@
         },
         {
             "name": "qianmoqingfeng/think-addons",
-            "version": "v3.0.2",
-            "version_normalized": "3.0.2.0",
+            "version": "v3.0.3",
+            "version_normalized": "3.0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/QianMoQingFeng/think-addons.git",
-                "reference": "4b30d84242d1bef0b08528aea130a6a8db0db935"
+                "reference": "6d916e769d72bd07edb0c8fdcffc56efa7a40f07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QianMoQingFeng/think-addons/zipball/4b30d84242d1bef0b08528aea130a6a8db0db935",
-                "reference": "4b30d84242d1bef0b08528aea130a6a8db0db935",
+                "url": "https://api.github.com/repos/QianMoQingFeng/think-addons/zipball/6d916e769d72bd07edb0c8fdcffc56efa7a40f07",
+                "reference": "6d916e769d72bd07edb0c8fdcffc56efa7a40f07",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -503,7 +503,7 @@
                 "topthink/think-helper": "^3.0.0",
                 "topthink/think-view": "^1.0"
             },
-            "time": "2022-11-01T11:25:02+00:00",
+            "time": "2022-11-09T14:46:11+00:00",
             "type": "library",
             "extra": {
                 "think": {
@@ -537,7 +537,7 @@
             "description": "The ThinkPHP6 Addons Package",
             "support": {
                 "issues": "https://github.com/QianMoQingFeng/think-addons/issues",
-                "source": "https://github.com/QianMoQingFeng/think-addons/tree/v3.0.2"
+                "source": "https://github.com/QianMoQingFeng/think-addons/tree/v3.0.3"
             },
             "install-path": "../qianmoqingfeng/think-addons"
         },
@@ -1143,7 +1143,13 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/top-think/think-template/zipball/abfc293f74f9ef5127b5c416310a01fe42e59368",
                 "reference": "abfc293f74f9ef5127b5c416310a01fe42e59368",
-                "shasum": ""
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "php": ">=7.1.0",
@@ -1241,7 +1247,13 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/top-think/think-view/zipball/edce0ae2c9551ab65f9e94a222604b0dead3576d",
                 "reference": "edce0ae2c9551ab65f9e94a222604b0dead3576d",
-                "shasum": ""
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "php": ">=7.1.0",

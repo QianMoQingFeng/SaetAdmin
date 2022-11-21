@@ -6,6 +6,10 @@ use think\helper\Str;
 
 trait AdminTrait
 {
+    // DataTrait
+    protected $switchAllowField = null;
+
+
 
     public function index()
     {

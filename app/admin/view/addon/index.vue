@@ -1,6 +1,6 @@
 <template>
     <div>
-        <saet-table ref="saetTable" :list="ST.list" :total="ST.total" :fields="fields" :config="config">
+        <st-table ref="saetTable" :list="ST.list" :total="ST.total" :fields="fields" :config="config">
             <template #table-operation-left>
                 <el-button>导入插件</el-button>
                 <el-button plain class="st-m-l-10">
@@ -46,7 +46,7 @@
                 </el-row>
                 <el-empty description="暂无插件" v-else></el-empty>
             </template>
-        </saet-table>
+        </st-table>
 
         <el-drawer v-if="detailContent" v-model="detailShow" title="详情" direction="btt" size="80%"
             :before-close="handleClose">

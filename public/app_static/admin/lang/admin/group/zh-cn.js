@@ -1,0 +1,1 @@
+LANG["zh-cn"]={"hello thinkphp":"\u6b22\u8fce\u4f7f\u7528ThinkPHP","data type error":"\u6570\u636e\u7c7b\u578b\u9519\u8bef"}

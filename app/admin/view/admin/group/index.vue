@@ -1,14 +1,14 @@
 
 <template>
     <div>
-        <saet-table :list="ST.list" :total="ST.total" :fields="fields">
+        <st-table :list="ST.list" :total="ST.total" :fields="fields">
             <template #auth_set="{ row, index }">
                 <div v-if="row">
                     <span v-if="row.rule_ids == '*'">无限制</span>
                     <el-button v-else type="primary" plain @click="openSet(row)">设置权限</el-button>
                 </div>
             </template>
-        </saet-table>
+        </st-table>
     </div>
 </template>
 
@@ -28,7 +28,7 @@ new SaetApp({
         ]
         const openSet = (e) => {
             St.window.open({
-                title: '设置权限', 'custom-class': 'adadad', url: 'auth?self=1&id=' + e.id
+                title: '设置权限', 'custom-class': 'adadad', url: 'auth?_self=1&id=' + e.id
             })
         }
         return { fields, openSet }

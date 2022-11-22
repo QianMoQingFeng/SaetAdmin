@@ -48,7 +48,7 @@ class Index
             header("Location: $installUrl");
             exit;
         }
-        
+        app('name');
         // 引入Saet公共函数
 
         include(SAET_PATH.'common.php');

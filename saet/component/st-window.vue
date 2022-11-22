@@ -172,7 +172,6 @@ St.window = windowTool
 
 </script>
 <style>
-.st-window {}
 
 .st-window .window-box .el-dialog__header {
     margin-right: 0px !important;

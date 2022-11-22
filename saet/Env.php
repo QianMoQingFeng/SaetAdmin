@@ -2,10 +2,10 @@
 
 namespace saet;
 
-use think\facade\Env;
+use think\facade\Env as ThinkEnv;
 
 // 应用请求对象类
-class EnvLib
+class Env
 {
     
     public static function setEnvGroup($group, $arr = null)
@@ -21,11 +21,11 @@ class EnvLib
     {
         // $value=json_encode($value,JSON_UNESCAPED_UNICODE);
         if (is_array($name)) {
-            foreach ($name as $key => $value)  Env::offsetSet($key, $value);
+            foreach ($name as $key => $value)  ThinkEnv::offsetSet($key, $value);
         } else {
-            Env::offsetSet($name, $value);
+            ThinkEnv::offsetSet($name, $value);
         }
-        $envArray = Env::get();
+        $envArray = ThinkEnv::get();
         ksort($envArray);
         $envPath = root_path() . DIRECTORY_SEPARATOR . '.env';
         $inicontent = self::arr_trinsform_ini($envArray);
@@ -37,7 +37,7 @@ class EnvLib
     // 获取分组变量
     public static function getEnvGroup(String $group)
     {
-        $envArray = Env::get();
+        $envArray = ThinkEnv::get();
         ksort($envArray);
         $arr = [];
         foreach ($envArray as $k => $v) {

@@ -18,7 +18,7 @@ trait AdminTrait
         $res = ['list' => $m->items(), 'total' => $m->total()];
 
         if ($this->request->isAjax()) {
-            $this->success('res', $res);
+            success('res', $res);
         }
 
         $this->assign($res);
@@ -58,7 +58,7 @@ trait AdminTrait
             array_push($search, ['name' => 'id|token', 'exp' => 'like', 'value' => "%$fastValue%"]);
         }
 
-        // $this->success('',$search);
+        // success('',$search);
 
         $where = function ($query) use ($search, $alias, $bind, &$model) {
             if (!empty($model)) {
@@ -164,7 +164,7 @@ trait AdminTrait
             // $data =   Request::only(['name', 'email']);
             $data = $this->request->param();
             $row->save($data);
-            $this->success('res');
+            success('res');
         }
 
 
@@ -184,19 +184,19 @@ trait AdminTrait
             if ($row) {
                 $res = $row->delete();
                 if ($res) {
-                    $this->success('删除成功');
+                    success('删除成功');
                 } else {
-                    $this->error('删除失败');
+                    error('删除失败');
                 }
             }
         }
-        $this->error('未找到与主键' . $this->model->getPk() . '匹配的数据');
+        error('未找到与主键' . $this->model->getPk() . '匹配的数据');
     }
 
     function switch()
     {
         if (!$this->switchAllowField) {
-            $this->error('请先设置switchAllowField允许可切换字段');
+            error('请先设置switchAllowField允许可切换字段');
         }
         $params = $this->request->param();
         if (isset($params[$this->model->getPk()])) {
@@ -209,10 +209,10 @@ trait AdminTrait
                 $res = $row->allowField($allowField)->force()->save($params);
                 if ($res) {
                     $row = $this->model->find($params[$this->model->getPk()]);
-                    $this->success('修改成功', ['row' => $row]);
+                    success('修改成功', ['row' => $row]);
                 }
             }
         }
-        $this->error('未找到与主键' . $this->model->getPk() . '匹配的数据');
+        error('未找到与主键' . $this->model->getPk() . '匹配的数据');
     }
 }

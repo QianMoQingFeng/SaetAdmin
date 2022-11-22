@@ -20,7 +20,7 @@ class Rule extends AdminBase
         $menuListTree = $menuList ? array_values(listToTree($menuList, 'children')) : [];
         $res = ['list' => $menuListTree, 'total' => count($menuList)];
         if ($this->request->isAjax()) {
-            $this->success('', $res);
+            success('', $res);
         }
         $this->assign($res);
         $this->fetch();

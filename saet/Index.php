@@ -48,6 +48,12 @@ class Index
             header("Location: $installUrl");
             exit;
         }
+        
+        // 引入Saet公共函数
+
+        include(SAET_PATH.'common.php');
+
+
 
         // 安装引导
         \think\facade\Route::any('install', function () {

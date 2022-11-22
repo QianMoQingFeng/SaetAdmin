@@ -2,9 +2,7 @@
 
 namespace saet;
 
-use think\template\TagLib;
-
-class ComponentTagLib extends TagLib
+class TagLib extends \think\template\TagLib
 {
     /**
      * 定义标签列表

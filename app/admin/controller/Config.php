@@ -21,7 +21,7 @@ class Config extends AdminBase
         $res = ['groupList' => $groupList, 'configList' => $list2];
 
         if ($this->request->isAjax()) {
-            $this->success('', $res);
+            success('', $res);
         }
         $this->assign($res);
 
@@ -37,7 +37,7 @@ class Config extends AdminBase
                 $row->value = $value;
                 $row->save();
             }
-            $this->success('修改成功');
+            success('修改成功');
         }
     }
 
@@ -49,7 +49,7 @@ class Config extends AdminBase
                 $data['weight'] = $this->model->max('weight') + 10;
             }
             $this->model->save($data);
-            $this->success('');
+            success('');
         }
     }
 
@@ -59,7 +59,7 @@ class Config extends AdminBase
             $data = $this->request->post('data');
             $row = $this->model->find($data['name']);
             $row->save($data);
-            $this->success('');
+            success('');
         }
     }
 
@@ -74,7 +74,7 @@ class Config extends AdminBase
                     $row->save();
                 }
             }
-            $this->success('设置成功');
+            success('设置成功');
         }
     }
 }

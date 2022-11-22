@@ -29,7 +29,7 @@ class Group extends AdminBase
             $rules = $this->request->param('rules');
             $group->rule_ids = $rules;
             $res = $group->save();
-            $this->success('设置成功');
+            success('设置成功');
         }
 
         $menuList = \app\admin\model\admin\Rule::field('title,id,pid')->select()->toArray();

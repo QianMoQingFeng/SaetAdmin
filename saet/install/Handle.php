@@ -7,8 +7,8 @@ namespace saet\install;
 use app\admin\AdminBase;
 use app\admin\library\AdminAuth;
 use PDO;
-use saet\core\Controller;
-use saet\EnvLib;
+use saet\Controller;
+use saet\Env;
 use think\facade\Db;
 use think\facade\Config;
 use think\facade\Lang;
@@ -16,7 +16,7 @@ use think\facade\Lang;
 class Handle extends Controller
 {
 
-    use \saet\ToolTrait;
+   
 
     protected $view_layout = '../saet/install/layout.html';
     protected $pdoModel = null;
@@ -26,7 +26,7 @@ class Handle extends Controller
         // Lang::setLangSet('en-us');
 
         $lock = SAET_PATH . 'install/installed.lock';
-        if (file_exists($lock)) $this->error(lang('Already installed'));
+        if (file_exists($lock)) error(lang('Already installed'));
         $res = chmod(ROOT_PATH, 0755);
         if ($this->request->isAjax()) {
 
@@ -34,7 +34,7 @@ class Handle extends Controller
             $type = $this->request->post('type', 'check');
             $checkRes = $this->checkMysql($data['hostname'], $data['username'], $data['password'], $data['database'], $data['hostport']);
             if ($checkRes && $type == 'check') {
-                $this->success('校验通过', [
+                success('校验通过', [
                     'version' => $checkRes['version()']
                 ]);
             }
@@ -58,7 +58,7 @@ class Handle extends Controller
                 if ($data['prefix'] != 'st_') $sql = str_replace("`st_", '`' . $data['prefix'], $sql);
                 $mysql->getPdo()->exec($sql);
             } catch (\Throwable $th) {
-                $this->error(lang('Database file installation failed'));
+                error(lang('Database file installation failed'));
             }
 
             // 写入配置
@@ -67,7 +67,7 @@ class Handle extends Controller
             // 写入管理员信息
             $res = AdminAuth::register(['group_ids' => 1, 'username' => $data['admin_username'], 'nickname' => $data['admin_username'], 'password' => $data['admin_password'], 'email' => 'email@saet.io', 'mobile' => '13888888888']);
             if ($res['code'] == 0) {
-                $this->error($res['msg']);
+                error($res['msg']);
             }
             // 写入用户信息
 
@@ -83,7 +83,7 @@ class Handle extends Controller
             // 生成安装锁
             file_put_contents($lock, 'Install Time : ' . date('Y-m-d H:i:s'));
 
-            $this->success(lang('install successed'));
+            success(lang('install successed'));
         }
         $this->assign([
             'file_auth' => substr(sprintf("%o", fileperms(ROOT_PATH)), -4),
@@ -102,10 +102,10 @@ class Handle extends Controller
             $this->pdoModel = new PDO("mysql:dbname=$database;host=$hostname;port=$hostport;", $username, $password);
             $pdo = $this->pdoModel->query("select version()");
             $res = $pdo->fetch(PDO::FETCH_ASSOC);
-            if ($res['version()'] < 8.0) $this->error('数据库版本过低', ['version' => $res['version()']]);
+            if ($res['version()'] < 8.0) error('数据库版本过低', ['version' => $res['version()']]);
             return $res;
         } catch (\Throwable $th) {
-            $this->error('数据库错误');
+            error('数据库错误');
         }
     }
 }

@@ -13,12 +13,12 @@ use think\facade\View;
 use think\Request;
 use think\Response;
 use think\Lang;
-use saet\core\Controller;
+use saet\Controller;
 
 class IndexBase extends Controller
 {
-    // use \app\admin\library\AdminTrait, \app\admin\library\AdminAuthTrait, \app\admin\library\SaetVueTrait, \saet\ToolTrait;
-    use \saet\ToolTrait;
+    // use \app\admin\library\AdminTrait, \app\admin\library\AdminAuthTrait, \app\admin\library\SaetVueTrait;
+   
     //  默认模型
     protected $model = null;
 

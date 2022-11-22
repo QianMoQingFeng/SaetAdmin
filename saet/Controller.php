@@ -1,4 +1,5 @@
-<?
+<?php
+declare (strict_types = 1);
 namespace saet;
 
 use saet\Lang as SaetLang;
@@ -8,7 +9,7 @@ use think\Addons;
 use think\facade\Cache;
 use think\facade\Lang;
 
-class SaetBase  extends Addons
+class Controller  extends Addons
 {
     // 全部成员属性
 

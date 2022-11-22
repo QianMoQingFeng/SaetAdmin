@@ -25,7 +25,7 @@ class Addon extends AdminBase
         // dump($list);
         $res = ['list' => $list, 'total' => $total];
 
-        if ($this->request->isAjax())  $this->success('res', $res);
+        if ($this->request->isAjax())  success('res', $res);
         $this->fetch('', $res);
     }
 }

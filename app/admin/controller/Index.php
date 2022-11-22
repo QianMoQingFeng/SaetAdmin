@@ -5,7 +5,7 @@ namespace app\admin\controller;
 
 use app\admin\AdminBase;
 use app\admin\model\admin\Rule as AdminRule;
-use saet\EnvLib;
+use saet\Env;
 use think\facade\Filesystem;
 class Index extends AdminBase
 {
@@ -130,14 +130,14 @@ class Index extends AdminBase
         }
         if ($this->request->isAjax()) {
             if (!$account || !$password) {
-                $this->error('参数未填写');
+                error('参数未填写');
             }
             $login = $this->auth->login($account, $password);
             if ($login) {
                 $admin = $this->auth->getAdminInfo();
-                $this->success('login ok', $admin);
+                success('login ok', $admin);
             } else {
-                $this->error($this->auth->getError());
+                error($this->auth->getError());
             }
         }
         $this->fetch();
@@ -148,9 +148,9 @@ class Index extends AdminBase
 
         $res = $this->auth->logout();
         if ($res) {
-            $this->success('logout success');
+            success('logout success');
         }
-        $this->success('logout success');
+        success('logout success');
     }
 
     /**
@@ -162,9 +162,9 @@ class Index extends AdminBase
         $name = $file->md5() . '.' . $file->getOriginalExtension();
         $save = Filesystem::disk('public')->putFileAs(Date('Y/m/d'), $file, $name);
         if ($save) {
-            $this->success('', '/storage/' . $save);
+            success('', '/storage/' . $save);
         } else {
-            $this->error('上传失败');
+            error('上传失败');
         }
     }
 }

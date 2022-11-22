@@ -23,8 +23,8 @@ class Config extends AdminBase
         if ($this->request->isAjax()) {
             success('', $res);
         }
+        
         $this->assign($res);
-
         $this->fetch();
     }
 

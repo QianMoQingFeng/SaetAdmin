@@ -4,6 +4,7 @@ namespace app\admin\library;
 
 use think\facade\Cookie;
 use app\admin\library\AdminAuth;
+use saet\Auth;
 
 trait AdminAuthTrait
 {
@@ -23,16 +24,17 @@ trait AdminAuthTrait
         $path = $this->request->pathinfo();
         $this->assign('rule', $path);
 
-        $this->auth = AdminAuth::instance();
+        $this->auth = Auth::instance();
         $token = $this->request->param('token', Cookie::get('token')) ?? $this->request->server('HTTP_TOKEN');
-        $this->auth->init($token);
+        $this->auth->init($token, 'admin', ['aid', 'avatar', 'username', 'nickname', 'groups', 'token']);
+
 
         
         // 是否需要登录
         if (!$this->auth->checkAction($this->noLogin)) {
             //是否登录
             if ($this->auth->isLogin()) {
-                $this->assign('admin', $this->auth->getAdminInfo());
+                $this->assign('admin', $this->auth->getInfo());
             } else {
                 $url = $this->request->baseFile() . '/index/login';
                 echo "<script type='text/javascript'>window.location.href='$url'</script>";

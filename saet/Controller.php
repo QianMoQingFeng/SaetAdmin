@@ -1,12 +1,16 @@
 <?php
-declare (strict_types = 1);
+
+declare(strict_types=1);
+
 namespace saet;
+
 
 use saet\Lang as SaetLang;
 use think\App;
 use think\facade\View;
 use think\Addons;
 use think\facade\Cache;
+use think\facade\Config;
 use think\facade\Lang;
 
 class Controller  extends Addons
@@ -35,11 +39,18 @@ class Controller  extends Addons
     public function __construct(App $app)
     {
         parent::__construct($app);
+        // 获取全部Config
+        $config = \app\common\model\Config::column('value', 'name');
+        Config::set($config,'site');
 
         $this->loadLang();
     }
 
-    // 加载目录
+    /**
+     * 加载并生成语言文件
+     *
+     * @return void
+     */
     private function loadLang()
     {
 

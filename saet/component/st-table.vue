@@ -12,6 +12,10 @@
                                 </template>
                                 <!-- 下拉单选 -->
                                 <template v-if="s.type == 'select'">
+                                    <!-- <el-select v-model="s.value" >
+                                        <el-option v-for="item in s.list" :key="item.value" :label="item.label"
+                                            :value="item.value" />
+                                    </el-select> -->
                                 </template>
                                 <!-- 选择日期/月份/年份 -->
                                 <template v-if="s.type == 'day' || s.type == 'month' || s.type == 'year'">
@@ -54,18 +58,16 @@
         </el-collapse-transition>
         <!-- tpl_cache -->
         <div class="head st-flex ">
-            <!-- <el-row>
-                    <template v-for="s in searchList">
-                        <el-col :lg="s.lg ?? 6" :md="s.md ?? 8" :sm="s.sm ?? 12" :xs="s.xs ?? 24"> -->
+
             <el-button icon="refresh" class="st-m-r-8" circle :loading="loading" @click="getList">
             </el-button>
 
-            <el-button type="primary" class="op-btn">
+            <el-button type="primary" class="op-btn" v-if="config.left.includes('add')">
                 <saet-icon name="ri-add-fill" :size="16"></saet-icon>
                 <span class="title">添加</span>
             </el-button>
 
-            <template v-if="fields.findIndex((item) => item.case == 'selection') > -1">
+            <template v-if="fields.findIndex((item) => item.case == 'selection') > -1 && config.left.includes('edit')">
                 <el-button type="primary" class="op-btn" :disabled="selectedRows.length ? false : true"
                     @click="editBtnClicked">
                     <saet-icon name="ri-pencil-fill"></saet-icon>
@@ -81,18 +83,19 @@
                 </el-popconfirm>
             </template>
 
-            <el-button type="warning" class="op-btn" @click="expandAll" :class="{ 'is-expand': expandAllStatus }"
+            <el-button type="warning" class="op-btn" @click="expandAll"
+                :class="{ 'is-expand': expandAllStatus } && config.left.includes('expand')"
                 v-if="fields.findIndex((item) => item.case == 'tree') > -1">
                 <saet-icon name="arrowUp" class="no-twinkle"></saet-icon>
                 <span class="title">{{ expandAllStatus ? '收起' : '展开' }}全部</span>
             </el-button>
 
-            <slot name="table-operation-left"></slot>
+            <template v-for="name in config.left">
+                <slot :name="'left-' + name"></slot>
+            </template>
 
             <div class="st-flex" style="flex: 1;">
             </div>
-
-
 
             <el-input v-if="config.fastSearch" v-model="fastSearchValue" placeholder="快速搜索"
                 style="width: 150px;display: inline-block;" class="st-m-x-10" @keyup.enter.native="fastSearch">
@@ -131,22 +134,14 @@
                                 <el-checkbox v-model="v.visible" :label="v.title" size="small">
                                 </el-checkbox>
                             </el-dropdown-item>
-
-                            <!-- <draggable v-model="fields" tag="el-dropdown-menu" item-key="title">
-                                <template #item="{element}">
-                                    <el-dropdown-item>
-                                        <el-checkbox v-model="element.visible" :label="element.title" size="small">
-                                        </el-checkbox>
-                                    </el-dropdown-item>
-                                </template>
-                            </draggable> -->
-
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
             </div>
+            <template v-for="name in config.right">
+                <slot :name="'right-' + name"></slot>
+            </template>
 
-            <slot name="table-operation-right"></slot>
         </div>
 
         <!-- <template v-for="(index, name) in $slots" :slot="name">
@@ -161,14 +156,14 @@
             <slot :data="list" :loading="loading"></slot>
         </div>
 
-
         <el-table v-if="!isset($slots['default'])" ref="tableRef" v-loading="loading" :data="list"
-            @mousewheel.stop="tableScrollChange" @select-all="selectClickAll" @selection-change="selectChange"
+            @mousewheel.stop="tableScrollChange" @select-all="selectClickAll" @select="selectItem"
             @mouseleave="enableWindowScroll" @header-click="clickColumnHead" @mouseenter="disableWindowScroll"
-            @expand-change="expandChange" style="width: 100%;border-radius: 8px;overflow: hidden;"
-            :row-class-name="(e) => { return ['row_line_', e.row.isDelSuccess == true ? 'del-animation' : ''] }"
-            table-layout="auto" header-row-class-name="header-row" v-bind="tableDefaultConfig" v-drag="dragOptions">
-
+            @row-contextmenu="rowContextmenu" @current-change="rowCurrentChange" @expand-change="expandChange"
+            style="width: 100%;border-radius: 8px;overflow: hidden;" table-layout="auto"
+            header-row-class-name="header-row" highlight-current-row v-bind="tableDefaultConfig" v-drag="dragOptions"
+            v-menu="menuObject">
+            <!-- v-menu="menuObject" -->
             <template v-for="e in fields">
                 <el-table-column :prop="e.name" :label="e.title" align="center" v-if="e.visible" v-bind="e"
                     :class-name="'case-' + e.case">
@@ -226,54 +221,95 @@
 
                         <!-- operation button -->
                         <template v-if="e.case == 'operation' || e.case == 'button'">
-                            <div>
-                                <template v-if="e.case == 'operation'">
-                                    <el-button icon="edit" type="primary" plain circle @click="editRow(row, e, index)">
-                                    </el-button>
-                                    <el-popconfirm title="确定删除当前项? " @confirm="delRow(row, e, index)">
-                                        <template #reference>
-                                            <el-button :icon="row.isDelSuccess ? 'select' : 'delete'"
-                                                :type="row.isDelSuccess ? 'success' : 'danger'"
-                                                :loading="row.delLoading" plain circle>
-                                            </el-button>
-                                        </template>
-                                    </el-popconfirm>
-                                    <el-button icon="rank" type="info" circle class="order-handle">
-                                    </el-button>
+                            <!-- 下拉 -->
+                            <el-dropdown :trigger="operateDropTrigger" :hide-on-click="operateDropHide"
+                                v-if="e.buttons.length > 0 && e.style == 'dropmenu'" v-bind="e.config">
+                                <el-button type="primary" plain>操作 <saet-icon name="arrow-down" class="st-m-l-6">
+                                    </saet-icon>
+                                </el-button>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <div v-for=" v in e.buttons" :ref="(el) => setOperateButtonRefs(el, $index, v)"
+                                            @click="() => { tableRef.setCurrentRow(row), v.click(row, v, operateButtonRefs[v.name + $index]) }">
+                                            <el-dropdown-item v-bind="v">{{ v.title }}
+                                            </el-dropdown-item>
+                                        </div>
+                                    </el-dropdown-menu>
                                 </template>
-
-                                <el-button v-for="b in e.buttons" v-bind="b" :title="b.title"
-                                    @click="b.click(row, e, index)">{{
-                                            b.title
+                            </el-dropdown>
+                            <!-- 按钮操作 -->
+                            <el-button-group v-if="e.style == 'buttongroup'">
+                                <el-button v-for="v in e.buttons" v-bind="v"
+                                    @click="() => { tableRef.setCurrentRow(row), v.click(row, v, operateButtonRefs[v.name + $index]) }"
+                                    :ref="(el) => setOperateButtonRefs(el, $index, v)">{{
+                                            v.title
                                     }}</el-button>
-
-                            </div>
+                            </el-button-group>
+                            <!-- 按钮 -->
+                            <el-button v-for="v in e.buttons" v-bind="v" v-if="e.style == 'button'"
+                                @click="() => { tableRef.setCurrentRow(row), v.click(row, v, operateButtonRefs[v.name + $index]) }"
+                                :ref="(el) => setOperateButtonRefs(el, $index, v)">{{
+                                        v.title
+                                }}</el-button>
                         </template>
+
+
+                        <!-- 排序 -->
+                        <template v-if="e.case == 'order'">
+                            <el-button icon="rank" type="info" circle class="order-handle">
+                            </el-button>
+                        </template>
+
                         <!-- icon -->
                         <template v-if="e.case == 'icon'">
                             <saet-icon :name="row[e.name]" style="font-size:16px;"></saet-icon>
                         </template>
+
                     </template>
                 </el-table-column>
                 <!-- </template> -->
             </template>
         </el-table>
+
+        <!-- 右键菜单 -->
+        <st-contextmenu ref="contextmenuRef" :menu="operateMenuList" @click-item="clickContextmenuItem"
+            v-if="operateMenuList.length > 0 && fields.find((e) => e.case == 'operation')?.contextmenu">
+        </st-contextmenu>
+
+        <el-popconfirm title="确定删除当前项? " v-model:visible="deleteTipVisible" ref="deleteTipRef" placement="left"
+            @confirm="delRow(currentRow)" @cancel="deleteTipVisible = false" virtual-triggering
+            :virtual-ref="deleteButtonRef">
+        </el-popconfirm>
+
+
         <div class="st-m-t-10 st-flex justify-between align-center">
             <span class="total-num">共 {{ total }} 条</span>
             <el-pagination :current-page="config.page.current" :total="total" @size-change="sizeChange"
-                @current-change="currentChange" hide-on-single-page v-bind="config.page">
+                @current-change="pageCurrentChange" hide-on-single-page v-bind="config.page" v-if="config.page">
             </el-pagination>
         </div>
+
     </div>
 </template>
+{component is="st-contextmenu"/}
 <script>
+console.log(Object.values(document.styleSheets));
+let remix = Object.values(document.styleSheets).find((item) => item.href.indexOf('remixicon') >= 0)
+console.log(remix);
+remix.cssRules.forEach(element => {
 
- SaetComponent(
+});
+// setTimeout(() => {
+//     console.log(Object.values(document.styleSheets).find((item) => item.href.indexOf('remix') >= -1));
+// }, 0);
+// console.log(document.styleSheets.find((a)=> a.href ==1));
+// console.log(document.styleSheets.find((item) => item.href.indexOf('remix') >= -1));
+SaetComponent(
     {
         name: 'st-table',
         template: '#st-table',
         props: {
-            list: Array, fields: Array, config: { type: Object, default: {} }, total: 0, tableDefaultConfig: { type: Object, default: {} }
+            list: Array, fields: Array, config: { type: Object, default: {} }, total: 0, tableDefaultConfig: { type: Object, default: {} }, init: { default: false }
         },
 
         setup(props, context) {
@@ -302,9 +338,12 @@
                     current: 1
                 },
                 placeholder: '-',//占位符
+                left: [],
+                right: [],
             };
+
             const fieldDefault = {
-                case: 'text',
+                // case: 'text',
                 visible: true,       //显示
                 search: {
                     type: 'text', exp: 'like'
@@ -346,8 +385,7 @@
 
             const searchCaseList = {
                 text: { exp: 'like', placeholder: '模糊查询' },
-                select: { exp: '=', placeholder: '精确查询' },
-                selects: { exp: 'in', placeholder: '多选查询' },
+                select: { exp: 'in', placeholder: '精确查询' },
                 between: { exp: 'between', placeholder: ['开始', '结束'], startPlaceholder: '开始', endPlaceholder: '结束' },
                 daterange: { exp: 'between time', desc: ['开始日期', '结束日期'], startPlaceholder: '开始日期', endPlaceholder: '结束日期', valueFormat: 'YYYY-MM-DD' },
                 monthrange: { exp: 'between time', desc: ['开始月份', '结束月份'], startPlaceholder: '开始月份', endPlaceholder: '结束月份', valueFormat: 'YYYY-MM' },
@@ -359,34 +397,47 @@
             }
             Object.keys(searchCaseList).forEach((key) => { searchCaseList[key] = St.deepAssign({ exp: 'like', md: 8 }, searchCaseList[key]) })
 
+          
             // 编辑某一行
             const editRow = (row) => {
-                console.log(row);
                 St.window.open({
                     title: '编辑', url: only(config.value.apiUrl.edit, { [[config.value.pk]]: row[config.value.pk] })
                 })
             };
             // 删除某一行
-            const delRow = (row, item, index) => {
-                row.delLoading = true
-                St.axios.post(config.value.apiUrl.del, { [config.value.pk]: row[config.value.pk] }, { successToast: true }).then((res) => {
-                    row.delLoading = false
-                    row.isDelSuccess = true
+            const delRow = (row) => {
+
+                let toast = St.message({
+                    message: '正在删除，请稍等',
+                    type: 'info',
+                    showClose: false,
+                    icon: 'loading',
+                    customClass: 'is-loading',
+                    duration: 0
+                })
+                deleteTipVisible.value = false
+
+                St.axios.post(config.value.apiUrl.del, { [config.value.pk]: row[config.value.pk] }, { delayTime: 500 }).then((res) => {
+
                     setTimeout(() => {
                         // 修复树形index不正确
                         let index2 = list.value.findIndex((e) => e[config.value.pk] == row[config.value.pk])
-                        if (index2 > -1 && index2 != index) {
-                            index = index2
-                        }
+                        if (index2 > -1 && index2 != currentRowIndex.value) index = currentRowIndex.value;
                         total.value -= 1
-                        list.value.splice(index, 1)
-                    }, 700);
+                        list.value.splice(currentRowIndex.value, 1)
+                        toast.close()
+                    }, 500);
+                    // 删除动画
+
+                    let currentDom = tableRef.value.$refs.tableWrapper.querySelector('.current-row')
+                    currentDom.style = `--max-height: ${currentDom.offsetHeight}px;`
+                    currentDom?.classList.add('del-animation')
                 }).catch((err) => {
-                    row.delLoading = false
+                    toast.close()
                 })
             }
 
-
+            // 初始化字段配置
             function getFields() {
                 let caseDefault = {
                     expand: { title: '展开Btn', type: 'expand', search: false },
@@ -404,7 +455,7 @@
                         }
                     },
                     icon: { width: 60 },
-                    operation: { title: '操作', 'min-width': 120, search: false }
+                    operation: { title: '操作', 'min-width': 120, search: false, buttons: [], style: 'dropmenu', contextmenu: true, fixed: 'right' }
                 }
 
                 let o = []
@@ -441,6 +492,7 @@
                 return res
             }
             const searchList = ref(getSearchList())
+
             Vue.watch(
                 () => config.value.search,
                 (n, o) => {
@@ -454,12 +506,13 @@
                 }
             }
             const getSearchData = () => {
+                console.log(searchList.value);
                 let d = []
                 for (let i = 0; i < searchList.value.length; i++) {
                     let e = searchList.value[i];
                     if (typeof (e.value) !== 'undefined' && e.value !== '') {
                         let value = e.value; if (e.exp == 'like') value = '%' + e.value + '%'
-                        d.push({ name: e.name, value: value ?? e.value, exp: e.exp });
+                        d.push([e.name, value ?? e.value, e.exp]);
                     }
                 }
                 return d
@@ -489,7 +542,7 @@
                 getList()
             }
 
-            const currentChange = (c) => {
+            const pageCurrentChange = (c) => {
                 config.value.page.current = c
                 getList()
             }
@@ -581,7 +634,8 @@
                     if (!have) tableRef.value.toggleRowSelection(row)
                 })
             }
-            const selectChange = (arr) => {
+
+            const selectItem = (arr, row) => {
                 selectedRows.value = arr
             }
 
@@ -609,7 +663,6 @@
             const delMany = () => {
                 console.log(selectedRows.value);
             }
-
 
             let treeIndex = props.fields.findIndex((item) => item.case == 'tree')
             const isTreeTable = ref(treeIndex > -1 ? true : false)
@@ -644,7 +697,6 @@
                 }
             }
 
-
             const dragOptions = [
                 {
                     selector: "tbody", // add drag support for row
@@ -662,29 +714,76 @@
                 },
             ];
 
-            shallowCopy = function (obj) {
-                // 只拷贝对象
-                if (typeof obj !== 'object') return;
-                // 根据obj的类型判断是新建一个数组还是一个对象
-                var newObj = obj instanceof Array ? [] : {};
-                // 遍历obj,并且判断是obj的属性才拷贝
-                for (var key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        newObj[key] = obj[key];
-                    }
-                }
-                return newObj;
-            }
-   
+
             const isset = (i) => {
-                if (typeof i === 'undefined') {
-                    return false
-                }
-                return true
+                return typeof i === 'undefined' ? false : true
             }
 
+            // contextmenu 
+            const contextmenuRef = ref(null)
+            const currentRow = ref()
+            const currentRowIndex = ref()
+
+            const operateDropTrigger = ref('click')
+            const operateDropHide = ref(false)
+
+            const operateButtonRefs = ref({});
+            const setOperateButtonRefs = (el, i, v) => {
+                operateButtonRefs.value[v.name + i] = el
+            };
+
+            const menuObject = ref({
+                ref: contextmenuRef, query: 'tbody tr', callback: (index, element, elements) => { }
+            })
+
+            // 编辑删除默认显示，权限不过关则显示，权限过关也可以控制隐藏，当所有buttons为空以及case == 'operation'为隐藏列
+            const operateEdit = { name: 'edit', title: "编辑", icon: 'edit', type: 'primary', plain: true, circle: true, click: (row) => { editRow(row ?? currentRow.value) } }
+            const operateDelete = {
+                name: 'delete', title: "删除", icon: 'delete', type: 'danger', plain: true, circle: true, click: (row, item, clickRef) => {
+                    if (deleteButtonRef.value != clickRef) {
+                        deleteButtonRef.value = clickRef
+                        deleteTipVisible.value = true
+                    }
+                }
+            }
+            const deleteButtonRef = ref()
+            const deleteTipVisible = ref(false)
+            const deleteTipRef = ref()
+
+            let operation = fields.find((v) => v.case == 'operation')
+            if (operation) {
+                if (editButton = operation.buttons.find((t) => t.name == 'edit')) { editButton = St.deepAssign(operateEdit, editButton) } else {
+                    // havebug 权限验证
+                    operation.buttons.push(operateEdit)
+                };
+                if (delButton = operation.buttons.find((t) => t.name == 'delete')) { delButton = St.deepAssign(operateDelete, delButton) } else {
+                    // havebug 权限验证
+                    operation.buttons.push(operateDelete)
+                };
+            }
+
+
+            const operateMenuList = ref(operation?.buttons ?? [])
+
+            const clickContextmenuItem = (item, refItem) => {
+                if (isset(item.click)) {
+                    item.click(currentRow.value, item, refItem)
+                }
+            }
+
+            const rowContextmenu = (row, column, event) => {
+                tableRef.value.setCurrentRow(row)
+                context.emit('rowContextmenu', row, column, event)
+            }
+
+            const rowCurrentChange = (row) => {
+                currentRow.value = row;
+                currentRowIndex.value = list.value.findIndex((i) => i == currentRow.value)
+            }
+
+            if (props.init) getList()
             return {
-                isset, dragOptions, isTreeTable, expandAllStatus, expandAll, expandChange, expandRow, clickColumnHead, selectChange, delMany, editBtnClicked, selectedRows, selectClickAll, enableWindowScroll, disableWindowScroll, tableRef, tableScrollChange, fastSearchValue, fastSearch, editRow, delRow, loading, config, fields, searchList, total, list, getList, sizeChange, copyText, currentChange, changeSwitch, clearSearchValue, dropdownRef, changeFiledDopdown, filedVisibleChange
+                rowCurrentChange, currentRowIndex, currentRow, operateDropTrigger, operateDropHide, operateButtonRefs, deleteTipVisible, setOperateButtonRefs, rowContextmenu, deleteButtonRef, deleteTipRef, clickContextmenuItem, operateMenuList, contextmenuRef, menuObject, isset, dragOptions, isTreeTable, expandAllStatus, expandAll, expandChange, expandRow, clickColumnHead, selectItem, delMany, editBtnClicked, selectedRows, selectClickAll, enableWindowScroll, disableWindowScroll, tableRef, tableScrollChange, fastSearchValue, fastSearch, editRow, delRow, loading, config, fields, searchList, total, list, getList, sizeChange, copyText, pageCurrentChange, changeSwitch, clearSearchValue, dropdownRef, changeFiledDopdown, filedVisibleChange
             }
         }
     }
@@ -794,36 +893,38 @@
     display: none;
 }
 
-/* 删除动画 */
+/* 删除动画havebug */
 
-.st-table .el-table .el-table__row .el-table__cell {
-    transition: all 200ms;
-    transition-delay: 300ms;
-}
 
 .st-table .el-table .el-table__row.del-animation .el-table__cell {
+    --del-time: 500ms;
     padding: 0px;
+    transition: padding var(--del-time);
+    transition-delay: 150ms;
 }
 
-
-@keyframes delRow {
+@keyframes del-animation {
     0% {
-        height: 80px;
+        max-height: var(--max-height);
+    }
+
+    4% {
         opacity: 1;
     }
 
     100% {
+        max-height: 0px;
         opacity: 0;
-        height: 0px;
     }
 }
 
 .el-table .el-table__row.del-animation .cell {
-    animation-delay: 300ms;
-    animation-name: delRow;
-    animation-duration: 400ms;
+    animation-delay: 150ms;
+    animation-name: del-animation;
+    animation-duration: var(--del-time);
     animation-fill-mode: forwards;
 }
+
 
 /* 选择按钮+树形 */
 .st-table .el-table .cell .el-table__placeholder {
@@ -844,5 +945,13 @@
     border-bottom-width: 0px;
 }
 
+/* 黑暗模式：表格操作固定栏  */
+html.dark .el-table.is-scrolling-left .el-table-fixed-column--right.is-first-column::before {
+    box-shadow: inset -10px 0 10px -8px rgb(50 50 50 / 50%);
+}
+
+html.dark [class*=" el-table-fixed-column--"] {
+    --el-bg-color: var(--el-bg-color-page)
+}
 </style>
     

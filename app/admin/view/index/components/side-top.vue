@@ -521,13 +521,6 @@ SaetComponent({
                 }
             }
         },
-        // changeTab(id) {
-        //     if (this.activeTabId == id) {
-        //         return false;
-        //     }
-        //     let menu = this.openTabList.find((item) => item.id == id);
-        //     this.$emit('setActive', { menu: menu, type: 'change' });
-        // },
 
         // 登出
         logout() {

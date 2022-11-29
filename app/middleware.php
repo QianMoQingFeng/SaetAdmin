@@ -9,5 +9,6 @@ return [
     // 多语言加载
     // \think\middleware\LoadLangPack::class,
     // Saet入口
-    \saet\Index::class
+    think\middleware\AllowCrossDomain::class,
+    saet\Index::class
 ];

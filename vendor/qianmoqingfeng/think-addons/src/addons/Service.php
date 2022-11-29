@@ -48,10 +48,12 @@ class Service extends \think\Service
             if (is_file($this->app->addons->getAddonsPath() . 'middleware.php')) {
                 $this->app->middleware->import(include $this->app->addons->getAddonsPath() . 'middleware.php', 'route');
             }
-        
+
             // 注册控制器路由
-            $route->rule("addons/:addon@[:module]/[:controller]/[:action]", $execute)->middleware(Addons::class);
-            $route->rule("addons/:addon/[:controller]/[:action]", $execute)->middleware(Addons::class);
+            $route->rule("addons/[:addon]@[:module]/[:controller]/[:action]", $execute)->middleware(Addons::class);
+            $route->rule("addons/[:addon]/[:controller]/[:action]", $execute)->middleware(Addons::class);
+
+
             // 自定义路由
             $routes = (array) Config::get('addons.route', []);
             foreach ($routes as $key => $val) {

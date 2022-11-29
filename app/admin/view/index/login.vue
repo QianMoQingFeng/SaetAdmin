@@ -12,10 +12,12 @@
 
                 <el-form class="form" :model="formData" ref="form" :rules="rules" label-width="80px" :inline="false"
                     size="normal">
+                    
                     <el-avatar :size="68" :src="lastAdmin.avatar" class="st-m-b-20"
                         style="border: 1px solid var(--el-border-color);"></el-avatar>
-                    <div class="welcome">{{ lastAdmin.nick_name }}，欢迎回来！</div>
-                    <div class="desc">列表形式展示多个字段，列表形式展示多个字段展示多个字段展示多个字段展示多个字段</div>
+                    <div class="welcome" v-if="lastAdmin">{{ lastAdmin.nickname }}，欢迎回来！</div>
+                    <!-- 序语 -->
+                    <div class="desc">{{'世界上没有不融化的雪,也没有永远不变的爱情,人心都是会变的。'}}</div>
 
                     <el-form-item :class="{ 'is-focus': accountFocus || formData.account }" class="st-m-t-30"
                         prop="account">

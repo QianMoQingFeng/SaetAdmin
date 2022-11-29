@@ -370,3 +370,10 @@ pages {
   display: flex;
   height: 100%;
 }
+
+// 兼容 message 组件 图标 loading动画
+
+.el-message.is-loading .el-icon{
+    -webkit-animation: rotating 2s linear infinite;
+    animation: rotating 2s linear infinite
+}

@@ -62,7 +62,7 @@ class Handle extends Controller
             }
 
             // 写入配置
-            EnvLib::setEnvGroup('DATABASE', $database);
+            Env::setEnvGroup('DATABASE', $database);
 
             // 写入管理员信息
             $res = AdminAuth::register(['group_ids' => 1, 'username' => $data['admin_username'], 'nickname' => $data['admin_username'], 'password' => $data['admin_password'], 'email' => 'email@saet.io', 'mobile' => '13888888888']);

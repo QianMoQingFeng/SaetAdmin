@@ -6,6 +6,7 @@ namespace app\admin\controller;
 use app\admin\AdminBase;
 use app\admin\model\admin\Rule as AdminRule;
 use saet\Env;
+use think\facade\Cookie;
 use think\facade\Filesystem;
 class Index extends AdminBase
 {
@@ -134,7 +135,9 @@ class Index extends AdminBase
             }
             $login = $this->auth->login($account, $password);
             if ($login) {
-                $admin = $this->auth->getAdminInfo();
+                $admin = $this->auth->getInfo();
+                Cookie::set('token', $this->auth->token);
+                Cookie::set('lastAdmin', json_encode($this->auth->getInfo()), 26265600);
                 success('login ok', $admin);
             } else {
                 error($this->auth->getError());
@@ -150,7 +153,7 @@ class Index extends AdminBase
         if ($res) {
             success('logout success');
         }
-        success('logout success');
+        error('logout fail');
     }
 
     /**

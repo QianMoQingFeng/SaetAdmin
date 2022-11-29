@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace app\admin; // 注意命名空间规范
+namespace app\api; // 注意命名空间规范
 
 use think\Addons;
 use think\App;
@@ -15,15 +15,14 @@ use think\Response;
 use think\Lang;
 use saet\Controller;
 
-class AdminBase extends Controller
+class ApiBase extends Controller
 {
-    use \app\admin\library\AdminTrait, \app\admin\library\AdminAuthTrait, \app\admin\library\SaetVueTrait;
+    // \app\admin\library\AdminTrait,
+    use \app\api\library\UserAuthTrait;
 
     //  默认模型
     protected $model = null;
-    protected $model_text = null;
 
-    protected $view_layout = '../app/admin/view/public/layout.html';
 
     /**
      * 构造器
@@ -35,12 +34,12 @@ class AdminBase extends Controller
 
         parent::__construct($app);
 
-
-
+        
+        
         // 初始化模型
         $this->setModel();
-        $this->initAdminAuthTrait();
-        $this->InitSaetVueTrait();
+        $this->initUserAuthTrait();
+        // $this->InitSaetVueTrait();
 
         $config = [
             'isAdoon' => IS_ADDON,
@@ -73,6 +72,7 @@ class AdminBase extends Controller
             $this->assign('apiContUrl', $apiContUrl);
             $this->assign('baseUrl', $baseUrl);
             $this->assign('apiRootUrl', $apiRootUrl);
+
         }
 
         // 兼容插件Admin模型
@@ -97,8 +97,8 @@ class AdminBase extends Controller
                 $this->model = new $model();
             }
         } else {
-            if (is_string($this->model_text)) {
-                $this->model = new ($this->model_text);
+            if (is_string($this->model)) {
+                $this->model = new $this->model();
                 return $this->model;
             }
 
@@ -112,8 +112,9 @@ class AdminBase extends Controller
             // $model_this = str_replace('/', '\\', $root . '/' . app('http')->getName() . '/model/' . $controller);
             // $model_common = str_replace(app('http')->getName(), $this->getAddonName() ? '' : 'common', $model_this);;
 
-            $root         = IS_ADDON ? 'addons/' . $this->getAddonName() : 'app';
-            $model_this   = str_replace('/', '\\', $root . '/' . app('http')->getName() . '/model/' . $controller);
+            $root = 'app';
+
+            $model_this = str_replace('/', '\\', $root . '/' . app('http')->getName() . '/model/' . $controller);
             $model_common = str_replace(app('http')->getName(), 'common', $model_this);
 
             try {

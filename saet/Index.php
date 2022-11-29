@@ -43,15 +43,13 @@ class Index
         // 检测是否安装
         $installUrl = '/install.html';
         $isInstalled = file_exists(SAET_PATH . 'install/installed.lock');
-        // 
         if ($isInstalled == false && $installUrl != $request->server('REQUEST_URI')) {
             header("Location: $installUrl");
             exit;
         }
-
+ 
         // 引入Saet公共函数
         include(SAET_PATH.'common.php');
-
 
 
         // 安装引导

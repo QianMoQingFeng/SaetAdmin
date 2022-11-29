@@ -8,13 +8,20 @@ trait AdminTrait
 {
     // DataTrait
     protected $switchAllowField = null;
-
+    protected $with = [];
 
 
     public function index()
     {
+
         list($where, $limit, $page, $search) = $this->buildSearch();
-        $m = $this->model->where($where)->paginate(['list_rows' => $limit, 'page' => $page]);
+
+        if (empty($this->with)) {
+            $m = $this->model->where($where)->paginate(['list_rows' => $limit, 'page' => $page]);
+        } else {
+            $m = $this->model->with($this->with)->where($where)->paginate(['list_rows' => $limit, 'page' => $page]);
+        }
+
         $res = ['list' => $m->items(), 'total' => $m->total()];
 
         if ($this->request->isAjax()) {
@@ -35,7 +42,7 @@ trait AdminTrait
         $page = $this->request->param('page', 1);
         $search = $this->request->param('search', []);
         $fastValue = $this->request->param('fast_value', null);
-
+        
         extract($config);
         // $where = [];
 
@@ -55,7 +62,7 @@ trait AdminTrait
         $bind = null;
 
         if ($fastValue) {
-            array_push($search, ['name' => 'id|token', 'exp' => 'like', 'value' => "%$fastValue%"]);
+            array_push($search, ['id',  "%$fastValue%",  'like']);
         }
 
         // success('',$search);
@@ -66,11 +73,16 @@ trait AdminTrait
                 // $model->bind($bind);
             }
 
-            foreach ($search as $k => $v) {
-                if ($v['exp'] == 'where_day' || $v['exp'] == 'where_month' || $v['exp'] == 'where_year') {
-                    $query->whereTime($v['name'], $v['value']);
-                } else {
-                    $query->where($v['name'], $v['exp'], $v['value']);
+            if (is_array($search)) {
+                foreach ($search as $k => $v) {
+                    $name  = $v[0];
+                    $value = $v[1];
+                    $exp   = $v[2];
+                    if ($exp == 'where_day' || $exp == 'where_month' || $exp == 'where_year') {
+                        $query->whereTime($v['name'], $v['value']);
+                    } else {
+                        $query->where($name, $exp, $value);
+                    }
                 }
             }
         };

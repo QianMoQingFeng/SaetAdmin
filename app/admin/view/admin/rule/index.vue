@@ -34,7 +34,7 @@
             _.config = { search: true, page: { pageSize: 1000 } }
             _.tableConfig = {
                 'row-key': "id", border: true, 'row-class-name'(e) {
-                    return ['row_line_', e.row.isDelSuccess == true ? 'del-animation' : '', e.row.is_menu_nav == 0 ? 'is-no-menu' : '']
+                    return [ e.row.isDelSuccess == true ? 'del-animation' : '', e.row.is_menu_nav == 0 ? 'is-no-menu' : '']
                 }
             }
             return _

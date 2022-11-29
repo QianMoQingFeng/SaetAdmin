@@ -36,12 +36,15 @@ class Controller  extends Addons
     // 模块信息
     protected $controller_path = '';
 
-    public function __construct(App $app)
+    public function __construct(App $app, $installed = true)
     {
         parent::__construct($app);
-        // 获取全部Config
-        $config = \app\common\model\Config::column('value', 'name');
-        Config::set($config,'site');
+
+        if ($installed) {
+            // 获取全部Config
+            $config = \app\common\model\Config::column('value', 'name');
+            Config::set($config, 'site');
+        }
 
         $this->loadLang();
     }

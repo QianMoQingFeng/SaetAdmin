@@ -55,7 +55,7 @@ class Index
         // 安装引导
         \think\facade\Route::any('install', function () {
             request()->setAction('install');
-            (new \saet\install\Handle(app()))->install();
+            (new \saet\install\Handle(app(),false))->install();
         });
 
         // 生成前端语言文件 

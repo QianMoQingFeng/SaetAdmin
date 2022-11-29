@@ -1,0 +1,19 @@
+/saet/install/installed.lock
+/runtime
+/.idea
+/.vscode
+/.env1
+/.env
+
+# 上传到文件资源
+/public/storage/*
+!/public/storage/README.md
+# 插件静态资源
+/public/addons_static/*
+!/public/addons_static/README.md
+# 插件静态资源
+/public/app_static/*
+!/public/app_static/README.md
+# 插件
+/addons/*
+!/addons/README.md

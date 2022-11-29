@@ -102,7 +102,8 @@ class Handle extends Controller
             $this->pdoModel = new PDO("mysql:dbname=$database;host=$hostname;port=$hostport;", $username, $password);
             $pdo = $this->pdoModel->query("select version()");
             $res = $pdo->fetch(PDO::FETCH_ASSOC);
-            if ($res['version()'] < 8.0) error('数据库版本过低', ['version' => $res['version()']]);
+            $mysqlVersion = preg_filter('/[a-z]|[A-Z]|-/','',$res['version()']);
+            if ($mysqlVersion < 5.7) error('数据库版本过低', ['version' => $mysqlVersion]);
             return $res;
         } catch (\Throwable $th) {
             error('数据库错误');

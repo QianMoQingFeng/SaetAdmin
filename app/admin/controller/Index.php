@@ -18,9 +18,9 @@ class Index extends AdminBase
     public function index()
     {
         if($this->auth->isSuper()){
-            $menuListOriginal = $menuList = AdminRule::select()->toArray();
+            $menuListOriginal = $menuList = AdminRule::where('is_menu',1)->select()->toArray();
         }else{
-            $menuListOriginal = $menuList = AdminRule::select($this->auth->getRuleIds())->toArray();
+            $menuListOriginal = $menuList = AdminRule::where('is_menu',1)->select($this->auth->getRuleIds())->toArray();
         }
 
         $openMenu = null;

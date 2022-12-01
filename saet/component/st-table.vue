@@ -533,7 +533,6 @@ SaetComponent(
                 return d
             }
 
-
             const copyText = (text) => {
                 St.copyText(text).then(() => {
                     St.message.success('复制成功')
@@ -543,7 +542,7 @@ SaetComponent(
             const loading = ref(false)
             const getList = () => {
                 loading.value = true;
-                St.axios.post(config.value.apiUrl.index, { search: getSearchData(), limit: config.value.page.pageSize, page: config.value.page.current, fast_value: fastSearchValue.value }).then((res) => {
+                St.axios.get(config.value.apiUrl.index, {params:{ search: getSearchData(), limit: config.value.page.pageSize, page: config.value.page.current, fast_value: fastSearchValue.value }}).then((res) => {
                     list.value = res.list
                     total.value = res.total
                     loading.value = false

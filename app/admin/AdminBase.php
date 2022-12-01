@@ -14,6 +14,7 @@ use think\Request;
 use think\Response;
 use think\Lang;
 use saet\Controller;
+use Symfony\Component\VarDumper\Server\DumpServer;
 
 class AdminBase extends Controller
 {
@@ -21,7 +22,7 @@ class AdminBase extends Controller
 
     //  默认模型
     protected $model = null;
-    protected $model_text = null;
+    protected $model_path = null;
 
     protected $view_layout = '../app/admin/view/public/layout.html';
 
@@ -68,7 +69,7 @@ class AdminBase extends Controller
             }
             $this->assign('adminTheme', $userAdminTheme);
             $apiRootUrl = $this->request->domain() . $this->request->root() . '/';
-            $apiContUrl = $this->request->domain() . $this->request->root() . '/' . (IS_ADDON ? 'addons/'.CONFIG['addonName'] . '/' : '')  . $this->request->controller();
+            $apiContUrl = $this->request->domain() . $this->request->root() . '/' . (IS_ADDON ? 'addons/' . CONFIG['addonName'] . '/' : '')  . $this->request->controller();
             $baseUrl = $this->request->domain() . $this->request->root() . '/';
             $this->assign('apiContUrl', $apiContUrl);
             $this->assign('baseUrl', $baseUrl);
@@ -97,16 +98,21 @@ class AdminBase extends Controller
                 $this->model = new $model();
             }
         } else {
-            if (is_string($this->model_text)) {
-                $this->model = new ($this->model_text);
+            if (is_string($this->model_path)) {
+                $this->model = new ($this->model_path);
                 return $this->model;
             }
 
             $controller = $this->request->controller();
+            
+
             if (strpos($controller, '.') !== false) {
                 $str = explode('.', $controller);
-                $controller = $str[0] . '/' . $str[1];
+                $controller = $str[0] . '/' . \think\helper\Str::studly($str[1]);
+            }else{
+                $controller = \think\helper\Str::studly( $controller);
             }
+
             // $root = $this->getAddonName() ? 'addons/' . $this->getAddonName() : 'app';
 
             // $model_this = str_replace('/', '\\', $root . '/' . app('http')->getName() . '/model/' . $controller);
@@ -115,7 +121,6 @@ class AdminBase extends Controller
             $root         = IS_ADDON ? 'addons/' . $this->getAddonName() : 'app';
             $model_this   = str_replace('/', '\\', $root . '/' . app('http')->getName() . '/model/' . $controller);
             $model_common = str_replace(app('http')->getName(), 'common', $model_this);
-
             try {
                 $this->model = new $model_this();
             } catch (\Throwable $th) {

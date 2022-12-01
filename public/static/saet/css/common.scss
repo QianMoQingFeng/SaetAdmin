@@ -311,7 +311,6 @@ $breakpoints-spec: (
 }
 
 .hidden {
-
 	@each $break-point-name,
 	$value in $breakpoints-spec {
 		&-#{$break-point-name} {
@@ -376,4 +375,12 @@ pages {
 .el-message.is-loading .el-icon{
     -webkit-animation: rotating 2s linear infinite;
     animation: rotating 2s linear infinite
+}
+
+
+// dialog自适应
+@media only screen and (max-width: 500px) {
+    .el-dialog.auto-size {
+        --el-dialog-width: 90% !important;
+    }
 }

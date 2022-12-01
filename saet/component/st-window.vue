@@ -1,7 +1,7 @@
 
 <template id="st-window">
-    <div class="st-window">
-        <div class="fixed-box" style="position: fixed;left:0px;bottom:0px;    z-index: 20000;">
+    <div class="st-window" v-if="(list.length      >      0)">
+        <div class="fixed-box" style="position: fixed;left:0px;bottom:0px;z-index: 20000;">
             <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="close" @tab-click="tabRecovery">
                 <template v-for="(e, key) in list">
                     <el-tab-pane :name="e.id" v-if="!e.visible && e.minimize">
@@ -17,10 +17,8 @@
         </div>
         <template v-for="(e, key) in list">
             <div>
-                <!-- S('background-color').camelize().s; -->
-                <!-- Full screen animation -->
                 <el-dialog v-model="e.visible" width="600px" v-bind="e" :show-close="false"
-                    :custom-class="'window-box ' + (e.fullscreenAnimation ? 'fullscreen-animation ' : '') + e.customClass"
+                    :custom-class="'window-box auto-size ' + (e.fullscreenAnimation ? 'fullscreen-animation ' : '') + e.customClass"
                     @closed="closed(key, e)" :style="{ color: '#333', fontSize: '14px' }" @opened="opened">
                     <template #header>
                         <div class="st-flex align-center">
@@ -129,7 +127,7 @@ const windowTool = {
 }
 
 St.window = windowTool
- SaetComponent({
+SaetComponent({
     name: 'st-window',
     template: '#st-window',
     setup() {
@@ -172,7 +170,6 @@ St.window = windowTool
 
 </script>
 <style>
-
 .st-window .window-box .el-dialog__header {
     margin-right: 0px !important;
 }
@@ -219,5 +216,7 @@ St.window = windowTool
 .st-window .fixed-box .el-tabs__header {
     margin: 0;
 }
+
+
 
 </style>

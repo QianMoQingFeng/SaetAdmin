@@ -68,7 +68,7 @@ class AdminBase extends Controller
             }
             $this->assign('adminTheme', $userAdminTheme);
             $apiRootUrl = $this->request->domain() . $this->request->root() . '/';
-            $apiContUrl = $this->request->domain() . $this->request->root() . '/' . (IS_ADDON ? CONFIG['addonName'] . '/' : '')  . $this->request->controller();
+            $apiContUrl = $this->request->domain() . $this->request->root() . '/' . (IS_ADDON ? 'addons/'.CONFIG['addonName'] . '/' : '')  . $this->request->controller();
             $baseUrl = $this->request->domain() . $this->request->root() . '/';
             $this->assign('apiContUrl', $apiContUrl);
             $this->assign('baseUrl', $baseUrl);

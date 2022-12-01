@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace saet\install;
 
-use app\admin\AdminBase;
-use app\admin\library\AdminAuth;
 use PDO;
+use saet\Auth;
 use saet\Controller;
 use saet\Env;
 use think\facade\Db;
@@ -65,7 +64,7 @@ class Handle extends Controller
             Env::setEnvGroup('DATABASE', $database);
 
             // 写入管理员信息
-            $res = AdminAuth::register(['group_ids' => 1, 'username' => $data['admin_username'], 'nickname' => $data['admin_username'], 'password' => $data['admin_password'], 'email' => 'email@saet.io', 'mobile' => '13888888888']);
+            $res = Auth::register('admin',['group_ids' => 1, 'username' => $data['admin_username'], 'nickname' => $data['admin_username'], 'password' => $data['admin_password'], 'email' => 'email@saet.io', 'mobile' => '13888888888']);
             if ($res['code'] == 0) {
                 error($res['msg']);
             }
@@ -95,14 +94,13 @@ class Handle extends Controller
     }
 
 
-
     private function checkMysql($hostname,  $username, $password, $database, $hostport = 3306)
     {
         try {
             $this->pdoModel = new PDO("mysql:dbname=$database;host=$hostname;port=$hostport;", $username, $password);
             $pdo = $this->pdoModel->query("select version()");
             $res = $pdo->fetch(PDO::FETCH_ASSOC);
-            $mysqlVersion = preg_filter('/[a-z]|[A-Z]|-/','',$res['version()']);
+            $mysqlVersion = preg_replace('/[a-z]|[A-Z]|-/','',$res['version()']);
             if ($mysqlVersion < 5.7) error('数据库版本过低', ['version' => $mysqlVersion]);
             return $res;
         } catch (\Throwable $th) {

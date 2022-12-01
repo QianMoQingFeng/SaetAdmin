@@ -159,24 +159,30 @@
         <el-table v-if="!isset($slots['default'])" ref="tableRef" v-loading="loading" :data="list"
             @mousewheel.stop="tableScrollChange" @select-all="selectClickAll" @select="selectItem"
             @mouseleave="enableWindowScroll" @header-click="clickColumnHead" @mouseenter="disableWindowScroll"
-            @row-contextmenu="rowContextmenu" @current-change="rowCurrentChange" @expand-change="expandChange"
+            @row-contextmenu="rowContextmenu" @current-change="rowCurrentChange"
             style="width: 100%;border-radius: 8px;overflow: hidden;" table-layout="auto"
             header-row-class-name="header-row" highlight-current-row v-bind="tableDefaultConfig" v-drag="dragOptions"
             v-menu="menuObject">
             <!-- v-menu="menuObject" -->
+
             <template v-for="e in fields">
                 <el-table-column :prop="e.name" :label="e.title" align="center" v-if="e.visible" v-bind="e"
                     :class-name="'case-' + e.case">
+                    <!-- Header -->
                     <!-- 树形头 -->
                     <template v-if="e.case == 'tree'" #header="{ column, index }">
                         <el-button type="primary" size="small" @click="">
                             <saet-icon name="DCaret"></saet-icon>
                         </el-button>
                     </template>
+
                     <template #default="{ row, column, $index, expanded }">
                         <!-- 自定义插槽 -->
-                        <slot :name="e.name" :row="row" :column="column" :index="$index" v-if="e.case == 'slot'">
+                        <slot :name="e.name" :row="row" :column="column" :index="$index" v-if="(e.case == 'slot')">
                         </slot>
+                        <slot name="_expand" :row="row" :column="column" :index="$index" v-if="(e.case == 'expand')">
+                        </slot>
+
                         <!-- tree-btn -->
                         <template v-if="e.case == 'tree'">
                             <el-button :type="row.children ? 'primary' : 'info'" size="small" @click="expandRow([row])"
@@ -184,17 +190,17 @@
                                 <saet-icon name="ArrowUp" class="no-twinkle"></saet-icon>
                             </el-button>
                         </template>
+
                         <!-- 文本 -->
                         <template v-if="e.case == 'text'">
-                            <div
-                                v-html="e.customValue(row[e.name], row, $index) ?? e.placeholder ?? config.placeholder">
+                            <div v-html="getValue(row, e, $index) ?? e.placeholder ?? config.placeholder">
                             </div>
                         </template>
+
                         <!-- 图片 -->
                         <template v-if="e.case == 'image'">
-                            <el-image :src="e.customValue(row[e.name], row, $index)"
-                                :preview-src-list="[e.customValue(row[e.name], row, $index)]" fit="fill" :lazy="true"
-                                preview-teleported>
+                            <el-image :src="getValue(row, e, $index)" :preview-src-list="[getValue(row, e, $index)]"
+                                fit="fill" :lazy="true" preview-teleported v-bind="e.bind_image">
                                 <template #error>
                                     <div class="image-slot">
                                         <saet-icon name="Warning"></saet-icon>
@@ -202,21 +208,43 @@
                                 </template>
                             </el-image>
                         </template>
+
                         <!-- copy -->
                         <template v-if="e.case == 'copy'">
-                            <el-input :value="e.customValue(row[e.name], row, $index)" placeholder="Copy value">
+                            <el-input :value="getValue(row, e, $index)" placeholder="Copy value" v-bind="e.bind_input">
                                 <template #append>
                                     <el-button icon="CopyDocument" @click="copyText(row[e.name])"></el-button>
                                 </template>
                             </el-input>
                         </template>
+
                         <!-- switch -->
                         <template v-if="e.case == 'switch'">
-                            <el-switch :loading="row['switch_loading_' + e.name]"
-                                :value="e.customValue(row[e.name], row, $index)" v-bind="e.switchConfig"
-                                :disabled="typeof e.switchConfig.disabled == 'boolean' ? e.switchConfig.disabled : e.switchConfig.disabled(row[e.name], row, $index)"
-                                @click="changeSwitch(row[e.name], row, e.name, e.switchConfig)">
+                            <el-switch :loading="row['switch_loading_' + e.name]" :value="getValue(row, e, $index)"
+                                v-bind="e.bind_switch"
+                                :disabled="typeof e.bind_switch.disabled == 'boolean' ? e.bind_switch.disabled : e.bind_switch.disabled(row[e.name], row, $index)"
+                                @click="changeSwitch(row[e.name], row, e.name, e.bind_switch)">
                             </el-switch>
+                        </template>
+
+                        <!-- tag -->
+                        <template v-if="e.case == 'tag'">
+                            <el-tag
+                                :type="((e.keyValueType || { '1': 'success', '0': 'danger' })[row[e.name]] || e.keyValueType['ELSE'])"
+                                v-bind="e.bind_tag">{{
+                                        getValue(row, e, $index)
+                                }}</el-tag>
+                        </template>
+
+                        <!-- 排序 -->
+                        <template v-if="e.case == 'order'">
+                            <el-button icon="rank" type="info" circle class="order-handle" v-bind="e.bind">
+                            </el-button>
+                        </template>
+
+                        <!-- icon -->
+                        <template v-if="e.case == 'icon'">
+                            <saet-icon :name="getValue(row, e, $index)" style="font-size:16px;"></saet-icon>
                         </template>
 
                         <!-- operation button -->
@@ -254,16 +282,7 @@
                         </template>
 
 
-                        <!-- 排序 -->
-                        <template v-if="e.case == 'order'">
-                            <el-button icon="rank" type="info" circle class="order-handle">
-                            </el-button>
-                        </template>
 
-                        <!-- icon -->
-                        <template v-if="e.case == 'icon'">
-                            <saet-icon :name="row[e.name]" style="font-size:16px;"></saet-icon>
-                        </template>
 
                     </template>
                 </el-table-column>
@@ -311,7 +330,6 @@ SaetComponent(
         props: {
             list: Array, fields: Array, config: { type: Object, default: {} }, total: 0, tableDefaultConfig: { type: Object, default: {} }, init: { default: false }
         },
-
         setup(props, context) {
 
             //全局配置
@@ -343,13 +361,10 @@ SaetComponent(
             };
 
             const fieldDefault = {
-                // case: 'text',
+                case: 'text',
                 visible: true,       //显示
                 search: {
                     type: 'text', exp: 'like'
-                },
-                customValue: (value, row, index) => {
-                    return value
                 },
                 'min-width': 120
             }
@@ -397,7 +412,7 @@ SaetComponent(
             }
             Object.keys(searchCaseList).forEach((key) => { searchCaseList[key] = St.deepAssign({ exp: 'like', md: 8 }, searchCaseList[key]) })
 
-          
+
             // 编辑某一行
             const editRow = (row) => {
                 St.window.open({
@@ -440,9 +455,9 @@ SaetComponent(
             // 初始化字段配置
             function getFields() {
                 let caseDefault = {
-                    expand: { title: '展开Btn', type: 'expand', search: false },
+                    expand: { type: 'expand', name: 'expand', search: false },
                     selection: { title: '选框Btn', type: 'selection', search: false },
-                    tree: { title: '树形折叠Btn', width: '50', search: false },
+                    tree: { title: '树形折叠Btn', width: '50', search: false, type: 'expand' },
                     switch: {
                         switchConfig: {
                             'inline-prompt': true,
@@ -685,9 +700,6 @@ SaetComponent(
                 })
             }
 
-            const expandChange = (row, expanded) => {
-                row._isExpand = expanded
-            }
 
             const clickColumnHead = (column) => {
                 if (column.className == 'case-tree' || column.className.includes['case-tree']) {
@@ -781,9 +793,16 @@ SaetComponent(
                 currentRowIndex.value = list.value.findIndex((i) => i == currentRow.value)
             }
 
+            const getValue = (row, config, index) => {
+                const name = config.name; const value = row[name];
+                if (typeof config.customValue == 'function') return config.customValue(value, row, index, config)
+                if (typeof config.keyValue == 'object' && (typeof config.keyValue[value] != 'undefined' || typeof config.keyValue['ELSE'] != 'undefined')) return config.keyValue[value] || config.keyValue['ELSE']
+                return value
+            }
+
             if (props.init) getList()
             return {
-                rowCurrentChange, currentRowIndex, currentRow, operateDropTrigger, operateDropHide, operateButtonRefs, deleteTipVisible, setOperateButtonRefs, rowContextmenu, deleteButtonRef, deleteTipRef, clickContextmenuItem, operateMenuList, contextmenuRef, menuObject, isset, dragOptions, isTreeTable, expandAllStatus, expandAll, expandChange, expandRow, clickColumnHead, selectItem, delMany, editBtnClicked, selectedRows, selectClickAll, enableWindowScroll, disableWindowScroll, tableRef, tableScrollChange, fastSearchValue, fastSearch, editRow, delRow, loading, config, fields, searchList, total, list, getList, sizeChange, copyText, pageCurrentChange, changeSwitch, clearSearchValue, dropdownRef, changeFiledDopdown, filedVisibleChange
+                getValue, rowCurrentChange, currentRowIndex, currentRow, operateDropTrigger, operateDropHide, operateButtonRefs, deleteTipVisible, setOperateButtonRefs, rowContextmenu, deleteButtonRef, deleteTipRef, clickContextmenuItem, operateMenuList, contextmenuRef, menuObject, isset, dragOptions, isTreeTable, expandAllStatus, expandAll, expandRow, clickColumnHead, selectItem, delMany, editBtnClicked, selectedRows, selectClickAll, enableWindowScroll, disableWindowScroll, tableRef, tableScrollChange, fastSearchValue, fastSearch, editRow, delRow, loading, config, fields, searchList, total, list, getList, sizeChange, copyText, pageCurrentChange, changeSwitch, clearSearchValue, dropdownRef, changeFiledDopdown, filedVisibleChange
             }
         }
     }
@@ -814,9 +833,10 @@ SaetComponent(
     align-items: center;
 }
 
+/* havebug */
 .st-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__expand-icon,
 .st-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__indent {
-    display: none;
+    /* display: none; */
 }
 
 .st-table .el-table .case-tree .cell .el-table__expand-icon {

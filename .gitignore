@@ -1,9 +1,8 @@
-/saet/install/installed.lock
-/runtime
-/.idea
-/.vscode
-/.env1
-/.env
+saet/install/installed.lock
+runtime
+.idea
+.vscode
+.env
 
 # 上传到文件资源
 /public/storage/*

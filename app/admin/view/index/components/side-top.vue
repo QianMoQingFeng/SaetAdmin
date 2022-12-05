@@ -525,7 +525,7 @@ SaetComponent({
         // 登出
         logout() {
             this.logouting = true;
-            St.axios.post('index/logout', this.formData, { loadingToast: false, successToast: true }).then((res) => {
+            St.axios.post('index/logout', this.formData, { loadToast: false, successToast: true }).then((res) => {
                 this.logouting = false;
                 setTimeout(() => {
                     window.location.reload();

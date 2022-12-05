@@ -249,7 +249,7 @@ SaetComponent({
         }
         const logout = () => {
             // 登出
-            St.axios.post('index/logout', this.formData, { loadingToast: true, successToast: true }).then((res) => {
+            St.axios.post('index/logout', this.formData, { loadToast: true, successToast: true }).then((res) => {
                 setTimeout(() => {
                     window.location.reload();
                 }, 400);

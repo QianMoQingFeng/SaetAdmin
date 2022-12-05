@@ -1,7 +1,7 @@
 <template id="st-image-upload">
-    <el-upload v-drag="dragOptions" v-model:file-list="fileList"
-        action="/admin.php/index/upload?_self=1" list-type="picture-card"
-        :on-preview="handlePictureCardPreview" :on-exceed="handleExceed" multiple drag v-bind="config">
+    <el-upload v-drag="dragOptions" v-model:file-list="fileList" action="/admin.php/index/upload?_self=1"
+        list-type="picture-card" :on-preview="handlePictureCardPreview" :on-exceed="handleExceed" multiple drag
+        auto-upload v-bind="$attr">
         <el-icon>
             <Plus />
         </el-icon>
@@ -9,13 +9,15 @@
     <el-image :initial-index="previewList.findIndex((item) => item == previewUrl)"
         style="width:0px;height:0px;display: block;" :src="previewUrl" id="st-image-upload-preview"
         :preview-src-list="previewList" preview-teleported></el-image>
+
 </template>
 <script>
- SaetComponent({
+SaetComponent({
     name: 'st-image-upload',
     template: '#st-image-upload',
-    props: { modelValue: [Array, String], resType: { type: String, default: 'string' }, config: { type: Object, default: {} } },
+    props: { modelValue: [Array, String], resType: { type: String, default: 'string' }, limit: { type: Number, default: 1 }, config: { type: Object, default: {} } },
     setup(props, context) {
+
         let dom = '<style>.el-upload-list,.el-upload--picture-card{--el-upload-list-picture-card-size:80px !important;--el-upload-picture-card-size:80px !important;}</style>'
         document.getElementById('js-style').innerHTML += dom;
 
@@ -40,25 +42,16 @@
         const fileList = ref([])
 
 
-        Vue.watch(
-            () => props.modelValue,
-            (n, o) => {
-                if (props.modelValue && typeof (props.modelValue) == 'string') {
-                    let list = St.string(props.modelValue).parseCSV(',', null)
-                    let c = []
-                    for (const url of list) {
-                        c.push({ url: url })
-                    }
-                    fileList.value = c
-                }
-                if (!props.modelValue) {
-                    fileList.value = []
-                }
-            }, { deep: true, immediate: true }
-        )
-
+        // 初始化
+        if (props.modelValue && typeof (props.modelValue) == 'string') {
+            let list = St.string(props.modelValue).parseCSV(',', null)
+            for (const url of list) {
+                fileList.value.push({ url: url })
+            }
+        }
 
         const handlePictureCardPreview = (e) => {
+            console.log(e);
             previewUrl.value = e.response ? e.response.data : e.url
             setTimeout(() => {
                 document.getElementById('st-image-upload-preview').click();
@@ -91,9 +84,10 @@
 
         const handleExceed = (files, uploadFiles) => {
             St.message.warning(
-                ` 最多只能上传 ${props.config.limit} 张`
+                ` 最多只能上传 ${props.limit} 张`
             )
         }
+
         return { dragOptions, handlePictureCardPreview, previewUrl, previewList, fileList, handleExceed }
     }
 })

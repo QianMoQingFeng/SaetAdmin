@@ -27,7 +27,7 @@
                     <st-array v-model="row.value"></st-array>
                 </template>
                 <template v-if="row.type == 'image'">
-                    <st-image-upload v-model="row.value" :config="{ limit: 1 }"></st-image-upload>
+                    <st-image-upload v-model="row.value" :limit="1"></st-image-upload>
                 </template>
                 <template v-if="row.type == 'select'">
                     <el-select v-model="row.value" placeholder="please select your zone">
@@ -53,7 +53,7 @@
         </el-form-item>
     </el-form>
 </template>
-{component is="st-array,st-json,st-upload-image"/}
+    {component is="st-array,st-json,st-upload-image"/}
 <script>
 SaetComponent({
     name: 'st-config',
@@ -108,7 +108,7 @@ SaetComponent({
             })
         }
         const position = ref('left')
-        if (window.innerWidth < 500 ) position.value = 'top'
+        if (window.innerWidth < 500) position.value = 'top'
         return { sure, back, loading, reset, edit, del, formData, position }
     }
 })

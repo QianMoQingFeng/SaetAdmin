@@ -1,4 +1,5 @@
 <template id="st-select">
+    
     <el-select v-model="modelValue" v-bind="$attrs" ref="selectRef" @visible-change="visibleChange" :loading="loading"
         filterable :filter-method="(total == list.length && list.length) ? null : inputValue">
         <el-option v-for="(row, index) in list " :key="index" :label="row[label]" :value="row[value]">

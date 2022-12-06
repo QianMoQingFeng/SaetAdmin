@@ -3,7 +3,7 @@ runtime
 .idea
 .vscode
 .env
-
+.git1
 # 上传到文件资源
 /public/storage/*
 !/public/storage/README.md

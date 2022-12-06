@@ -14,12 +14,11 @@
             <el-button type="primary" @click="onSubmit">Create</el-button>
             <el-button>Cancel</el-button>
         </el-form-item>
-        
     </el-form>
 </template>
 
 <script>
-    
+
 new SaetApp({
     setup() {
         const _ = reactive({})

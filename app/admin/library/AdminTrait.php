@@ -16,12 +16,16 @@ trait AdminTrait
 
         list($where, $limit, $page, $search) = $this->buildSearch();
 
-        if (empty($this->with)) {
-            $m = $this->model->where($where)->paginate(['list_rows' => $limit, 'page' => $page]);
-        } else {
-            $m = $this->model->with($this->with)->where($where)->paginate(['list_rows' => $limit, 'page' => $page]);
+        $model = $this->model;
+        if (!empty($this->with)) {
+            $model = $model->with($this->with);
         }
 
+        if ($this->request->param('_label')) {
+            $model = $model->field($this->request->param('_label'));;
+        }
+
+        $m = $model->where($where)->paginate(['list_rows' => $limit, 'page' => $page]);
         $res = ['list' => $m->items(), 'total' => $m->total()];
 
         if ($this->request->isAjax()) {
@@ -34,7 +38,6 @@ trait AdminTrait
 
     protected function buildSearch($config = [], $defaultWhere = [])
     {
-
         $model = isset($this->model) ? $this->model : $this->setModel();
         $key = $this->request->param('key', 'id');
         $order = $this->request->param('order', 'desc');
@@ -42,7 +45,7 @@ trait AdminTrait
         $page = $this->request->param('page', 1);
         $search = $this->request->param('search', []);
         $fastValue = $this->request->param('fast_value', null);
-        
+
         extract($config);
         // $where = [];
 
@@ -62,7 +65,7 @@ trait AdminTrait
         $bind = null;
 
         if ($fastValue) {
-            array_push($search, ['id',  "%$fastValue%",  'like']);
+            array_push($search, ['name',  "%$fastValue%",  'like']);
         }
 
         // success('',$search);
@@ -173,12 +176,10 @@ trait AdminTrait
         $row = $this->model->find($pkValue);
 
         if ($this->request->isAjax()) {
-            // $data =   Request::only(['name', 'email']);
             $data = $this->request->param();
-            $row->save($data);
-            success('res');
+            ($row ?? $this->model)->save($data);
+            success('存储成功');
         }
-
 
         $this->fetch('', ['row' => $row]);
     }

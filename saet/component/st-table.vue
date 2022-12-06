@@ -62,18 +62,19 @@
             <el-button icon="refresh" class="st-m-r-8" circle :loading="loading" @click="getList">
             </el-button>
 
-            <el-button type="primary" class="op-btn" v-if="config.left.includes('add')">
+            <el-button type="primary" class="op-btn" v-if="config.left.includes('add')" @click="addBtnClicked">
                 <saet-icon name="ri-add-fill" :size="16"></saet-icon>
                 <span class="title">添加</span>
             </el-button>
 
-            <template v-if="fields.findIndex((item) => item.case == 'selection') > -1 && config.left.includes('edit')">
+            <template v-if="fields.findIndex((item) => item.case == 'selection') > -1">
                 <el-button type="primary" class="op-btn" :disabled="selectedRows.length ? false : true"
-                    @click="editBtnClicked">
+                    v-if="config.left.includes('edit')" @click="editBtnClicked">
                     <saet-icon name="ri-pencil-fill"></saet-icon>
                     <span class="title">编辑</span>
                 </el-button>
-                <el-popconfirm :title="`确定删除选中的${selectedRows.length}项数据?`" @confirm="delMany()">
+                <el-popconfirm :title="`确定删除选中的${selectedRows.length}项数据?`" @confirm="delMany()"
+                    v-if="config.left.includes('del')">
                     <template #reference>
                         <el-button type="danger" class="op-btn" :disabled="selectedRows.length ? false : true">
                             <saet-icon name="ri-delete-bin-5-fill"></saet-icon>
@@ -230,10 +231,8 @@
                         <!-- tag -->
                         <template v-if="e.case == 'tag'">
                             <el-tag
-                                :type="((e.keyValueType || { '1': 'success', '0': 'danger' })[row[e.name]] || e.keyValueType['ELSE'])"
-                                v-bind="e.bind_tag">{{
-                                        getValue(row, e, $index)
-                                }}</el-tag>
+                                :type="((e.keyValueType || { '1': 'success', '0': 'danger' })[row[e.name]] || (e.keyValueType?.['ELSE']))"
+                                v-bind="e.bind_tag" v-text="getValue(row, e, $index)"></el-tag>
                         </template>
 
                         <!-- 排序 -->
@@ -337,7 +336,7 @@ SaetComponent(
                 pk: 'id',
                 apiUrl: {
                     index: ST.apiContUrl + '/index',
-                    add: ST.apiContUrl + '/add',
+                    add: ST.apiContUrl + '/edit',
                     edit: ST.apiContUrl + '/edit',
                     del: ST.apiContUrl + '/del',
                     switch: ST.apiContUrl + '/switch',
@@ -416,6 +415,7 @@ SaetComponent(
             // 编辑某一行
             const editRow = (row) => {
                 St.window.open({
+                    width: '65%', top: '10vh',
                     title: '编辑', url: only(config.value.apiUrl.edit, { [[config.value.pk]]: row[config.value.pk] })
                 })
             };
@@ -430,6 +430,7 @@ SaetComponent(
                     customClass: 'is-loading',
                     duration: 0
                 })
+
                 deleteTipVisible.value = false
 
                 St.axios.post(config.value.apiUrl.del, { [config.value.pk]: row[config.value.pk] }, { delayTime: 500 }).then((res) => {
@@ -542,7 +543,7 @@ SaetComponent(
             const loading = ref(false)
             const getList = () => {
                 loading.value = true;
-                St.axios.get(config.value.apiUrl.index, {params:{ search: getSearchData(), limit: config.value.page.pageSize, page: config.value.page.current, fast_value: fastSearchValue.value }}).then((res) => {
+                St.axios.get(config.value.apiUrl.index, { params: { search: getSearchData(), limit: config.value.page.pageSize, page: config.value.page.current, fast_value: fastSearchValue.value } }).then((res) => {
                     list.value = res.list
                     total.value = res.total
                     loading.value = false
@@ -653,6 +654,13 @@ SaetComponent(
                 selectedRows.value = arr
             }
 
+
+            // 添加按钮
+            const addBtnClicked = () => {
+                St.window.open({
+                    title: '添加', url: config.value.apiUrl.add
+                })
+            }
             // 批量编辑
             const editBtnClicked = () => {
                 for (let i = 0; i < tableRef.value.getSelectionRows().length; i++) {
@@ -793,15 +801,27 @@ SaetComponent(
             }
 
             const getValue = (row, config, index) => {
-                const name = config.name; const value = row[name];
+                const name = config.name;
+                let value = row[name]
+                if (St.string(config.name).includes('.')) {
+                    let arr = St.string(config.name).parseCSV('.', null);
+                    value = St.copy(row)
+                    for (let i = 0; i < arr.length; i++) {
+                        const key = arr[i];
+                        if (!value || typeof value[key] == 'undefined') break;
+                        value = value[key]
+                    }
+                }
+                // console.log(name,value);
                 if (typeof config.customValue == 'function') return config.customValue(value, row, index, config)
-                if (typeof config.keyValue == 'object' && (typeof config.keyValue[value] != 'undefined' || typeof config.keyValue['ELSE'] != 'undefined')) return config.keyValue[value] || config.keyValue['ELSE']
+                if (typeof config.keyValue == 'object' && (typeof config.keyValue[value] != 'undefined' || (typeof config.keyValue['ELSE'] != 'undefined' && value))) return config.keyValue[value] || config.keyValue['ELSE']
+                if (typeof config.keyValue == 'object' && typeof config.keyValue['NULL'] != 'undefined' && !value) return config.keyValue['NULL']
                 return value
             }
 
-            if (props.init) getList()
+            if (props.init !== false) getList()
             return {
-                getValue, rowCurrentChange, currentRowIndex, currentRow, operateDropTrigger, operateDropHide, operateButtonRefs, deleteTipVisible, setOperateButtonRefs, rowContextmenu, deleteButtonRef, deleteTipRef, clickContextmenuItem, operateMenuList, contextmenuRef, menuObject, isset, dragOptions, isTreeTable, expandAllStatus, expandAll, expandRow, clickColumnHead, selectItem, delMany, editBtnClicked, selectedRows, selectClickAll, enableWindowScroll, disableWindowScroll, tableRef, tableScrollChange, fastSearchValue, fastSearch, editRow, delRow, loading, config, fields, searchList, total, list, getList, sizeChange, copyText, pageCurrentChange, changeSwitch, clearSearchValue, dropdownRef, changeFiledDopdown, filedVisibleChange
+                addBtnClicked, getValue, rowCurrentChange, currentRowIndex, currentRow, operateDropTrigger, operateDropHide, operateButtonRefs, deleteTipVisible, setOperateButtonRefs, rowContextmenu, deleteButtonRef, deleteTipRef, clickContextmenuItem, operateMenuList, contextmenuRef, menuObject, isset, dragOptions, isTreeTable, expandAllStatus, expandAll, expandRow, clickColumnHead, selectItem, delMany, editBtnClicked, selectedRows, selectClickAll, enableWindowScroll, disableWindowScroll, tableRef, tableScrollChange, fastSearchValue, fastSearch, editRow, delRow, loading, config, fields, searchList, total, list, getList, sizeChange, copyText, pageCurrentChange, changeSwitch, clearSearchValue, dropdownRef, changeFiledDopdown, filedVisibleChange
             }
         }
     }
@@ -836,6 +856,7 @@ SaetComponent(
 .st-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__expand-icon,
 .st-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__indent {
     /* display: none; */
+    color: transparent;
 }
 
 .st-table .el-table .case-tree .cell .el-table__expand-icon {

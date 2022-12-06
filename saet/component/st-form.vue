@@ -1,40 +1,49 @@
 <template id="st-form">
-    <el-form class="st-form" :model="data" ref="form" :rules="rules" label-width="120px" :label-position="position"
+    <el-form class="st-form" ref="formRef" :model="data" :rules="rules" label-width="120px" :label-position="position"
         :inline="false" size="normal">
 
-        <template v-for="row in fields">
-            <el-form-item :prop="row.name" v-if="typeof (row.visible) == 'undefined' ? row.visible = true : row.visible"
-                :label="row.title" v-bind="row">
-                <template v-if="row.case == 'text'">
-                    <el-input v-model="data[row.name]" placeholder=""></el-input>
+        <template v-for="v in fields">
+            <el-form-item :prop="v.name" v-if="v.visible" :label="v.title" v-bind="v">
+                <template v-if="v.case == 'slot'">
+                    <slot :name="v.name"></slot>
                 </template>
-                <template v-if="row.case == 'long-text'">
-                    <el-input v-model="data[row.name]" placeholder="" :rows="2" type="textarea"></el-input>
+                <template v-if="v.case == 'text'">
+                    <el-input v-model="data[v.name]" placeholder=""></el-input>
                 </template>
-                <template v-if="row.case == 'json'">
-                    <st-json v-model="data[row.name]"></st-json>
+                <template v-if="v.case == 'long-text'">
+                    <el-input v-model="data[v.name]" placeholder="" :rows="2" type="textarea"></el-input>
                 </template>
-                <template v-if="row.case == 'array'">
-                    <st-array v-model="data[row.name]"></st-array>
+                <template v-if="v.case == 'json'">
+                    <st-json v-model="data[v.name]"></st-json>
                 </template>
-                <template v-if="row.case == 'image'">
-                    <st-image-upload v-model="data[row.name]" v-bind="row"></st-image-upload>
+                <template v-if="v.case == 'array'">
+                    <st-array v-model="data[v.name]"></st-array>
                 </template>
-                <template v-if="row.case == 'remote-select'">
-                    <st-select v-model="data[row.name]" :init="Boolean(row)" v-bind="row"></st-select>
+                <template v-if="v.case == 'image'">
+                    <st-image-upload v-model="data[v.name]" v-bind="v"></st-image-upload>
                 </template>
-                <template v-if="row.case == 'select'">
-                    <el-select v-model="row.value" placeholder="please select your zone">
-                        <el-option
-                            v-for="(label, value) in  typeof (row.option) == 'string' ? JSON.parse(row.option) : row.option"
-                            :key="value" :label="label" :value="value">
+
+                <template v-if="v.case == 'remote-select'">
+                    <st-select v-model="data[v.name]" :init="Boolean(data[v.name])" v-bind="v"></st-select>
+                </template>
+
+                <template v-if="v.case == 'select'">
+                    <el-select v-model="data[v.name]" placeholder="please select your zone">
+                        <el-option v-for="value in v.option" :key="value" :label="value" :value="value"
+                            v-if="typeof (v.option) == 'array'">
                         </el-option>
+                        <template v-else>
+                            <el-option
+                                v-for="(label, value) in  typeof (v.option) == 'string' ? JSON.parse(v.option) : v.option"
+                                :key="value" :label="label" :value="value">
+                            </el-option>
+                        </template>
                     </el-select>
                 </template>
-                <template v-if="row.case == 'radio'">
-                    <el-radio-group v-model="data[row.name]" class="ml-4">
+                <template v-if="v.case == 'radio'">
+                    <el-radio-group v-model="data[v.name]" class="ml-4">
                         <el-radio :label="value"
-                            v-for="(title, value) in  typeof (row.option) == 'string' ? JSON.parse(row.option) : row.option">
+                            v-for="(title, value) in  typeof (v.option) == 'string' ? JSON.parse(v.option) : v.option">
                             {{ title }}</el-radio>
                     </el-radio-group>
                 </template>
@@ -60,32 +69,23 @@ SaetComponent({
         loadType: { type: [Boolean, String], default: 'full' }
     },
     setup(props, context) {
-
-        const sure = () => {
-            startLoading()
-            St.axios.post(props.url, getData(), { successToast: true }).then((res) => {
-                closeLoading()
-                // context.emit('success', null)
-            }).catch((err) => {
-                // closeLoading()
+        const formRef = ref(null)
+        const sure = async () => {
+            await formRef.value.validate((valid, fields) => {
+                if (valid) {
+                    St.axios.post(props.url, getData(), {
+                        successToast: true, loadToast: {
+                            case: 'full', target: '.st-form',
+                            lock: true,
+                            text: '正在保存...',
+                        }
+                    })
+                }
             })
+
         }
 
-        const butLoading = ref(false)
-        const fullLoadRef = ref(null)
-        const startLoading = () => {
-            if (props.loadType == 'button') butLoading.value = true;
-            if (props.loadType == 'full') {
-                fullLoadRef.value = St.loading.service({
-                    target: '.st-form',
-                    lock: true,
-                    text: '正在保存...',
-                })
-            }
-        }
-        const closeLoading = () => {
-            butLoading.value = false; fullLoadRef.value.close();
-        }
+
 
         const initData = St.copy(props.data);
 
@@ -101,6 +101,13 @@ SaetComponent({
             return row
         }
 
+        const initFields = () => {
+            for (let index = 0; index < props.fields.length; index++) {
+                props.fields[index] = St.deepAssign({ visible: true }, props.fields[index])
+            }
+        }
+
+        initFields()
         const reset = () => {
             props.fields = initData.value
             initData.value = reactive(JSON.parse(JSON.stringify(props.fields)))
@@ -120,9 +127,10 @@ SaetComponent({
                 context.emit('success', null)
             })
         }
+        // 手机自适应
         const position = ref('left')
         if (window.innerWidth < 500) position.value = 'top'
-        return { sure, back, butLoading, reset, edit, del, position }
+        return { formRef, sure, back, reset, edit, del, position }
     }
 })
 </script>
@@ -144,5 +152,9 @@ SaetComponent({
 
 .st-form .el-form-item:nth-of-type(even):not(.operation) {
     background-color: var(--el-fill-color-light);
+}
+
+.st-form .el-form-item__content div {
+    flex: 1;
 }
 </style>

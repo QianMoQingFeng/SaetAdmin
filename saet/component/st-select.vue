@@ -1,13 +1,13 @@
 <template id="st-select">
-    
+
     <el-select v-model="modelValue" v-bind="$attrs" ref="selectRef" @visible-change="visibleChange" :loading="loading"
         filterable :filter-method="(total == list.length && list.length) ? null : inputValue">
-        <el-option v-for="(row, index) in list " :key="index" :label="row[label]" :value="row[value]">
+        <el-option v-for="(row, index) in list " :key="index" :label="(row[label] || row)" :value="(row[value] || row)">
         </el-option>
     </el-select>
 
     <div ref="opeartionRef">
-        <div v-if="(loading == false && total != list.length)" class="st-flex st-m-10 align-center">
+        <div v-if="(loading == false && total != list.length && total)" class="st-flex st-m-10 align-center">
             <el-pagination :hide-on-single-page="true" :total="total" layout="->,prev, next,jumper, " :page-size="limit"
                 :current-page="page" small background @current-change="(n) => { page = n; getList() }"></el-pagination>
             / {{ Math.ceil(total / limit) }}
@@ -25,9 +25,11 @@ SaetComponent({
         label: { type: String, default: 'name' },
         value: { type: String, default: 'id' },
         limit: { type: Number, default: 10 },
-        url: String, init: { default: false }
+        url: String, init: { default: false }, alwaysUpdatet: { default: false }
     },
+
     setup(props) {
+
         const selectRef = ref()
         const opeartionRef = ref(null)
         const list = ref([])
@@ -40,7 +42,7 @@ SaetComponent({
         const visibleChange = (s) => {
             // 排除数据
             if (s) {
-                if (total.value == 0) {
+                if (total.value == 0 || props.alwaysUpdatet) {
                     getList()
                 }
             } else {
@@ -56,9 +58,9 @@ SaetComponent({
         const page = ref(1);
         const getList = () => {
             loading.value = true
-            St.axios.post(props.url, { _label: 'id,name', page: page.value, limit: props.limit, fast_value: fast_value.value }).then((res) => {
+            St.axios.post(props.url, { _label: [props.value, props.label], page: page.value, limit: props.limit, fast_value: fast_value.value }).then((res) => {
                 list.value = res.list
-                total.value = res.total
+                total.value = res.total || res.list.length
                 loading.value = false
             })
         }

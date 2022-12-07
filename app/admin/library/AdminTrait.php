@@ -47,8 +47,8 @@ trait AdminTrait
         $fastValue = $this->request->param('fast_value', null);
 
         extract($config);
+        
         // $where = [];
-
         // foreach ($search as $k => &$item) {
         //     // switch ($item[1]) {
         //     //     case 'LIKE':

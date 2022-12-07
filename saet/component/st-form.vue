@@ -82,9 +82,7 @@ SaetComponent({
                     })
                 }
             })
-
         }
-
 
 
         const initData = St.copy(props.data);

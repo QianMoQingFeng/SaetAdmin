@@ -1,9 +1,6 @@
-saet/install/installed.lock
-runtime
 .idea
 .vscode
 .env
-.git1
 # 上传到文件资源
 /public/storage/*
 !/public/storage/README.md
@@ -16,3 +13,7 @@ runtime
 # 插件
 /addons/*
 !/addons/README.md
+#安装文件
+saet/install/installed.lock
+#runtime
+runtime

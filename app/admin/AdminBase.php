@@ -36,8 +36,6 @@ class AdminBase extends Controller
 
         parent::__construct($app);
 
-
-
         // 初始化模型
         $this->setModel();
         $this->initAdminAuthTrait();

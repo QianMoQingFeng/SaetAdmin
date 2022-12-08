@@ -8,7 +8,7 @@ use think\View;
 class Rule extends AdminBase
 {
 
-    protected $switchAllowField = 'is_menu_nav';
+    protected $switchAllowField = 'is_menu';
 
     public function index()
     {

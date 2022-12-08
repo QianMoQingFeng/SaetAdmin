@@ -14,6 +14,7 @@ class Auth
     protected static $instance = null;
     protected $authType        = '';
     protected $authKey         = '';
+    protected $authModel       = null;
     protected $allowFields     = '';     //true 表示全部允许
     protected $isSuper         = false;
     protected $info            = [];
@@ -31,9 +32,12 @@ class Auth
     public function init($token, $authType, $allowFields = '')
     {
         $this->authType    = $authType;
-        $this->authKey     = substr($authType, 0, 1).'id';
+        $this->authKey     = substr($authType, 0, 1) . 'id';
         $this->allowFields = $allowFields;
 
+        // 设置authModel
+        $model = ['admin' => 'app\admin\model\Admin', 'user' => 'app\common\model\User'];
+        $this->authModel = new ($model[$authType]);
         if ($token) {
             $res = Token::checkToken($token, $authType);
             if ($res['status'] == true) {
@@ -55,10 +59,9 @@ class Auth
      */
     public function easyLogin($auth_id)
     {
-        $info = Db::name($this->authType)->find($auth_id);
+        $info = $this->authModel->find($auth_id)->toArray();
 
         if ($info) {
-
             $info['token']    = $this->token;
             $info['groups']   = Db::name($this->authType . '_group')->select(explode(',', $info['group_ids']))->toArray();
             $this->info = $info;

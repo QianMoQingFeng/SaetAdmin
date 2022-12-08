@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use think\exception\HttpResponseException;
+
 use think\Response;
 
 if (!function_exists('success')) {
@@ -55,5 +58,26 @@ if (!function_exists('result')) {
         $response = Response::create($result, $type, $code)->header($header);
         throw new HttpResponseException($response);
         die;
+    }
+}
+
+if (!function_exists('cdn')) {
+
+    /**
+     * 获取上传资源的CDN的地址
+     * @param string  $url    资源相对地址
+     * @param boolean $domain 是否显示域名 或者直接传入域名
+     * @return string
+     */
+    function cdnurl($url, $domain = false)
+    {
+        $regex = "/^((?:[a-z]+:)?\/\/|data:image\/)(.*)/i";
+        $cdnurl =  think\facade\Config::get('upload.cdnurl');
+        $url = preg_match($regex, $url) || ($cdnurl && stripos($url, $cdnurl) === 0) ? $url : $cdnurl . $url;
+        if ($domain && !preg_match($regex, $url)) {
+            $domain = is_bool($domain) ? request()->domain() : $domain;
+            $url = $domain . $url;
+        }
+        return $url;
     }
 }

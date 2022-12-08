@@ -1,7 +1,7 @@
 
 <template>
     <div>
-        <st-table :search="[]" :list="ST.list ?? []" :total="ST.total ?? 0" :fields="fields" :config="config"
+        <st-table :list="ST.list" :total="ST.total" :fields="fields" :config="config"
             :table-default-config="tableConfig">
         </st-table>
     </div>
@@ -12,8 +12,7 @@
 <script>
     new SaetApp({
         setup() {
-            const _ = reactive({});
-            _.fields = [
+            const fields = ref([
                 { case: 'selection' },
                 { name: 'id', title: 'ID' },
                 {
@@ -27,17 +26,17 @@
                 { name: 'icon', title: '图标', case: 'icon' },
                 { name: 'url', title: '规则', case: 'copy' },
                 { case: 'tree' },
-                { name: 'is_menu_nav', title: '菜单', case: 'switch', search: { type: 'radio' } },
+                { name: 'is_menu', title: '菜单', case: 'switch', search: { type: 'radio' } },
                 { name: 'create_time', title: '创建时间', search: [ { type: 'datetimerange' },{ type: 'datetimerange' }] },
                 { case: 'operation' },
-            ]
-            _.config = { search: true, page: { pageSize: 1000 } }
-            _.tableConfig = {
+            ])
+            const config = ref({page: { pageSize: 1000 } })
+            const tableConfig = {
                 'row-key': "id", border: true, 'row-class-name'(e) {
                     return [ e.row.isDelSuccess == true ? 'del-animation' : '', e.row.is_menu_nav == 0 ? 'is-no-menu' : '']
                 }
             }
-            return _
+            return {fields,config,tableConfig}
         }
     })
 </script>

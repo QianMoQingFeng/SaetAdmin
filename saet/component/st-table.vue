@@ -458,9 +458,9 @@ SaetComponent(
                 let caseDefault = {
                     expand: { type: 'expand', name: 'expand', search: false },
                     selection: { title: '选框Btn', type: 'selection', search: false },
-                    tree: { title: '树形折叠Btn', width: '50', search: false, type: 'expand' },
+                    tree: { title: '树形折叠Btn', width: '50', search: false },
                     switch: {
-                        switchConfig: {
+                        bind_switch: {
                             'inline-prompt': true,
                             'active-value': 1,
                             'inactive-value': 0,
@@ -471,7 +471,8 @@ SaetComponent(
                         }
                     },
                     icon: { width: 60 },
-                    operation: { title: '操作', 'min-width': 120, search: false, buttons: [], style: 'dropmenu', contextmenu: true, fixed: 'right' }
+                    buttons: { title: '操作', 'min-width': 1, search: false, buttons: [], style: 'button', contextmenu: true, fixed: 'right' },
+                    operation: { title: '操作', 'min-width': 1, search: false, buttons: [], style: 'dropmenu', contextmenu: true, fixed: 'right' }
                 }
 
                 let o = []
@@ -701,6 +702,7 @@ SaetComponent(
                 expandAllStatus.value = !expandAllStatus.value;
                 expandRowTree(props.list)
             }
+
             const expandRowTree = (arr) => {
                 arr.forEach((row) => {
                     if (row.children) { tableRef.value.toggleRowExpansion(row, expandAllStatus.value); expandRowTree(row.children); }
@@ -856,7 +858,7 @@ SaetComponent(
 .st-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__expand-icon,
 .st-table .el-table .el-table__cell:not(.el-table__expand-column) .el-table__indent {
     /* display: none; */
-    color: transparent;
+    /* color: transparent; */
 }
 
 .st-table .el-table .case-tree .cell .el-table__expand-icon {

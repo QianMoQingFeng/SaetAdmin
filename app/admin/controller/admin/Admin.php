@@ -7,6 +7,5 @@ use app\admin\AdminBase;
 
 class Admin extends AdminBase
 {
-
-
+    protected $model_path = 'app\admin\model\Admin';
 }

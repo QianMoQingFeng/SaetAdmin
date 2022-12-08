@@ -5,6 +5,8 @@
 /public/storage/*
 !/public/storage/README.md
 # 插件静态资源
+/public/addons/*
+!/public/addons/README.md
 /public/addons_static/*
 !/public/addons_static/README.md
 # 插件静态资源

@@ -3,7 +3,6 @@
 namespace app\admin\library;
 
 use think\facade\Cookie;
-use app\admin\library\AdminAuth;
 use saet\Auth;
 
 trait AdminAuthTrait

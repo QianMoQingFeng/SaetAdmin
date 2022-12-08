@@ -28,7 +28,7 @@
                 <div class="avatar">
                     <span class="tag"></span>
                     <el-avatar
-                        src="https://img2.baidu.com/it/u=3768902040,1772619951&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
+                        :src="ST.admin.avatar"
                         fit="fill"></el-avatar>
                 </div>
                 <div class="info">

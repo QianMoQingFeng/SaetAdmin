@@ -1,6 +1,6 @@
 <?php
 namespace app\admin\model\admin;
-use think\Model;
+use saet\Model;
 
 class Group extends Model
 {

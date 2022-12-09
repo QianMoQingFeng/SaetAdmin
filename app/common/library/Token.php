@@ -42,41 +42,30 @@ class Token
      * @param String|Int $active_time 生效时间秒或者具体时间
      * @return Token
      */
-    public static function createToken($auth_id, $auth = 'admin', $app = 'free', $expire_time = 2592000, $active_time = 0, $storage = ['mysql', 'memcached'])
+    public static function createToken($auth_id, $auth = 'admin', $app = 'free', $active_time = null, $expire_second = 2592000, $storage = ['mysql', 'memcached'])
     {
-       
-        if (is_int($expire_time) && is_int($active_time)) {
-            $expire_second = $expire_time;
-            $expire_time = datetime(null, (time() + $active_time + $expire_time));
-            $active_time = datetime(null, time() + $active_time);
-        } elseif (is_string($expire_time) && is_int($active_time)) {
-            $active_time = datetime(null, time() + $active_time);
-            $expire_second = strtotime($expire_time) - time() + $active_time;
-        } elseif (is_int($expire_time) && is_string($active_time)) {
-            $expire_second = $expire_time;
-            $expire_time = datetime(null, strtotime($active_time) + $expire_time);
-        } elseif (is_string($expire_time) && is_string($active_time)) {
-            $expire_second = strtotime($expire_time) - strtotime($active_time);
-        }
 
-        $authArr = ['admin' => ['idField' => 'aid', 'model' => 'app\admin\model\admin\Token'], 'user' => ['idField' => 'uid', 'model' => 'app\common\model\UserToken']];
 
+        $authArr     = ['admin' => ['idField' => 'aid', 'model' => 'app\admin\model\admin\Token'], 'user' => ['idField' => 'uid', 'model' => 'app\common\model\UserToken']];
+        $active_time = $active_time == null ? time() : $active_time;
+        $expire_time = $active_time +  $expire_second;
         $data = [
             $authArr[$auth]['idField'] => $auth_id,
             'app' => $app,
             'expire_second' => $expire_second,
             'expire_time' => $expire_time,
             'active_time' => $active_time,
+            'create_time' => time(),
         ];
 
         $dataStr = json_encode($data);
         // $encry = md5(md5($dataStr) . \saet\tool\Random::alnum(10));
         $encry = md5(md5($dataStr) . \think\helper\Str::random(10, 2, '0123456789'));
         $data['token'] = $token = self::encryptToken($auth_id, $encry);
-        
+
         $tokenCache = self::getTokenCache();
         if (in_array('memcached', $storage) && $tokenCache) {
-            $tokenInfo = ['s' => strtotime($active_time), 'e' => strtotime($expire_time)];
+            $tokenInfo = ['s' => $active_time, 'e' => $expire_time];
             $tokenCache->set($auth . '_' . $token, $tokenInfo, $expire_second < self::$memcachedMaxSecond ? $expire_second : self::$memcachedMaxSecond);
         }
 
@@ -126,18 +115,18 @@ class Token
             $tokenModel =   Db::name($auth . '_token');
             $tokenInfo = $tokenModel->where([$authArr[$auth]['idField'] => $auth_id, 'token' => $token])->find();
             if ($tokenInfo) {
-                if (strtotime($tokenInfo['active_time']) <= time() && strtotime($tokenInfo['expire_time']) > time()) {
+                if ($tokenInfo['active_time'] <= time() && $tokenInfo['expire_time'] > time()) {
                     $status = true;
                     $message = 'mysql：right';
                     // 执行此处，说明尚未添加token到memcached 3600s/次
                     $tokenCache = self::getTokenCache();
                     if (in_array('memcached', $storage) && $tokenCache) {
-                        $expire_second = strtotime($tokenInfo['expire_time']) - time(); //当前剩余
-                        $tokenInfo = ['s' => strtotime($tokenInfo['active_time']), 'e' => strtotime($tokenInfo['expire_time'])];
+                        $expire_second = $tokenInfo['expire_time'] - time(); //当前剩余
+                        $tokenInfo = ['s' => $tokenInfo['active_time'], 'e' => $tokenInfo['expire_time']];
                         $tokenCache->set($auth . '_' . $token, $tokenInfo, $expire_second < self::$memcachedMaxSecond ? $expire_second : self::$memcachedMaxSecond);
                     }
                 } else {
-                    $tokenInfo->delete();
+                    $tokenModel->where([$authArr[$auth]['idField'] => $auth_id, 'token' => $token])->delete();
                     $message = 'mysql：Token过期或未生效';
                 }
             } else {
@@ -156,7 +145,7 @@ class Token
         }
         if (in_array('mysql', $storage)) {
             $authArr = ['admin' => ['idField' => 'aid', 'model' => 'app\admin\model\admin\Token'], 'user' => ['idField' => 'uid', 'model' => 'app\common\model\UserToken']];
-            $tokenModel = Db::name($auth . '_token');
+            $tokenModel =  new ($authArr[$auth]['model']);
             $tokenInfo = $tokenModel->where(['token' => $token])->find();
             if ($tokenInfo['is_temporary']) {
                 $tokenInfo->delete();

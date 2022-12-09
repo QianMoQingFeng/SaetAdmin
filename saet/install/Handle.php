@@ -15,7 +15,7 @@ use think\facade\Lang;
 class Handle extends Controller
 {
 
-   
+
 
     protected $view_layout = '../saet/install/layout.html';
     protected $pdoModel = null;
@@ -59,12 +59,16 @@ class Handle extends Controller
             } catch (\Throwable $th) {
                 error(lang('Database file installation failed'));
             }
+            // 写入env文件
+            if (!file_exists(ROOT_PATH . '.env')) {
+                file_put_contents(ROOT_PATH . '.env',  file_get_contents(SAET_PATH . 'install/.env.example'));
+            }
 
             // 写入配置
             Env::setEnvGroup('DATABASE', $database);
 
             // 写入管理员信息
-            $res = Auth::register('admin',['group_ids' => 1, 'username' => $data['admin_username'], 'nickname' => $data['admin_username'], 'password' => $data['admin_password'], 'email' => 'email@saet.io', 'mobile' => '13888888888']);
+            $res = Auth::register('admin', ['group_ids' => 1, 'username' => $data['admin_username'], 'nickname' => $data['admin_username'], 'password' => $data['admin_password'], 'email' => 'email@saet.io', 'mobile' => '13888888888']);
             if ($res['code'] == 0) {
                 error($res['msg']);
             }
@@ -100,7 +104,7 @@ class Handle extends Controller
             $this->pdoModel = new PDO("mysql:dbname=$database;host=$hostname;port=$hostport;", $username, $password);
             $pdo = $this->pdoModel->query("select version()");
             $res = $pdo->fetch(PDO::FETCH_ASSOC);
-            $mysqlVersion = preg_replace('/[a-z]|[A-Z]|-/','',$res['version()']);
+            $mysqlVersion = preg_replace('/[a-z]|[A-Z]|-/', '', $res['version()']);
             if ($mysqlVersion < 5.7) error('数据库版本过低', ['version' => $mysqlVersion]);
             return $res;
         } catch (\Throwable $th) {

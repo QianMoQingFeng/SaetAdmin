@@ -136,7 +136,7 @@ class Index extends AdminBase
             $login = $this->auth->login($account, $password);
             if ($login) {
                 $admin = $this->auth->getInfo();
-                Cookie::set('token', $this->auth->token);
+                Cookie::set('admin_token', $this->auth->token);
                 Cookie::set('lastAdmin', json_encode($this->auth->getInfo()), 26265600);
                 success('login ok', $admin);
             } else {

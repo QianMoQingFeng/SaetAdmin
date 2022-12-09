@@ -2,7 +2,7 @@
 
 namespace app\admin\model;
 
-use think\Model;
+use saet\Model;
 
 class Admin extends Model
 {

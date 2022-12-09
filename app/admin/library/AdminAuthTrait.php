@@ -24,7 +24,7 @@ trait AdminAuthTrait
         $this->assign('rule', $path);
 
         $this->auth = Auth::instance();
-        $token = $this->request->param('token', Cookie::get('token')) ?? $this->request->server('HTTP_TOKEN');
+        $token = $this->request->param('admin_token', Cookie::get('admin_token')) ?? $this->request->server('ADMIN_TOKEN');
         $this->auth->init($token, 'admin', ['aid', 'avatar', 'username', 'nickname', 'groups', 'token']);
 
 

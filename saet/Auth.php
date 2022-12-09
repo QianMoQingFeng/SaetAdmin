@@ -6,6 +6,7 @@ namespace saet;
 
 use app\common\library\Token;
 use think\exception\ValidateException;
+use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Validate;
 
@@ -192,6 +193,7 @@ class Auth
     public function logout()
     {
         $res = Token::deleteToken($this->token, $this->authType);
+        Cookie::delete($this->authType.'_token');
         return $res;
     }
     /**

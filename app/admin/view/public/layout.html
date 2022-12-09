@@ -31,7 +31,12 @@
 
   <script src="/static/package/draggable/vuedraggable.umd.min.js"></script>
 
-
+  <style>
+    html {
+      min-height: -webkit-fill-available;
+      min-height: fill-available;
+    }
+  </style>
 
 
 </head>
@@ -39,7 +44,7 @@
 <body>
   <div id="saetApp"></div>
   <div id="js-style"></div>
-  
+
   <vue>{__CONTENT__}</vue>
 
   {component is="st-window"/}

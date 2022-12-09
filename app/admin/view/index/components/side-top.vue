@@ -70,7 +70,7 @@
                         </div>
                     </el-tooltip>
                     <el-button @click="" text circle>
-                        <el-dropdown >
+                        <el-dropdown>
                             <saet-icon :size="20" name="ri-translate-2"></saet-icon>
                             <template #dropdown>
                                 <el-dropdown-menu>
@@ -107,12 +107,12 @@
                         <el-avatar :size="50" :src="ST.admin.avatar" class="st-m-r-10">
                         </el-avatar>
                         <div class="st-flex-col justify-around st-p-y-4">
-                            <div><span class="st-m-r-5">{{ ST.admin.nick_name }}</span>
-                                <el-tag size="small" type="info">Aid:{{ ST.admin.aid }}</el-tag>
+                            <div><span class="st-m-r-5">{{ ST.admin.nickname }}</span>
+                                <el-tag size="small" type="info">AID:{{ ST.admin.aid }}</el-tag>
                             </div>
                             <div style="font-size: 12px;width: 160px;">
-                                <span>{{ ST.admin.username }}</span>
-                                <span v-if="ST.admin.mobile || ST.admin.email">（{{ ST.admin.mobile || ST.admin.email
+                                <span>用户名：{{ ST.admin.username || '未设置' }}</span>
+                                <span v-if="ST.admin.mobile || ST.admin.email">{{ ST.admin.mobile || ST.admin.email
                                 }}）</span>
                             </div>
                         </div>
@@ -477,7 +477,7 @@ SaetComponent({
             }, { deep: true, immediate: true }
         )
 
-   
+
         return { idTreeArr, tabRef, scrollChange, adminBtnRef, adminInfoRef, drawer, adminTheme, changeTheme, changeColor, changeSideType, saveTheme, relTheme, colorList, saveThemeIng, saveSysThemeIng, changeMenuType, changeTab, removeTab, tabActiveId, openTabList }
     },
     computed: {

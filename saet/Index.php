@@ -32,12 +32,12 @@ class Index
     {
 
         define('DS', DIRECTORY_SEPARATOR);
-        define('ROOT_PATH', root_path());
+        define('ROOT_PATH', root_path()); // 应用根目录
         define('APP_PATH', app_path());
         define('PUBLIC_PATH', public_path());
         define('RUNTIME_PATH', runtime_path());
         define('CONFIG_PATH', config_path());
-        define('BASE_PATH', base_path());
+        define('BASE_PATH', base_path()); // 应用基础目录
         define('SAET_PATH', ROOT_PATH . 'saet/');
 
         // 检测是否安装

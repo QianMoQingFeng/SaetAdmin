@@ -1,7 +1,6 @@
 <template id="st-form">
     <el-form class="st-form" ref="formRef" :model="data" :rules="rules" label-width="120px" :label-position="position"
         :inline="false" size="normal">
-
         <template v-for="v in fields">
             <el-form-item :prop="v.name" v-if="v.visible" :label="v.title" v-bind="v">
                 <template v-if="v.case == 'slot'">
@@ -99,9 +98,10 @@ SaetComponent({
             return row
         }
 
+        const fieldDefault = { visible: true, case: 'text' }
         const initFields = () => {
             for (let index = 0; index < props.fields.length; index++) {
-                props.fields[index] = St.deepAssign({ visible: true }, props.fields[index])
+                props.fields[index] = St.deepAssign(fieldDefault, props.fields[index])
             }
         }
 
@@ -153,6 +153,6 @@ SaetComponent({
 }
 
 .st-form .el-form-item__content div {
-    flex: 1;
+    /* flex: 1; */
 }
 </style>

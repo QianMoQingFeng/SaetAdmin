@@ -1,6 +1,7 @@
 <template>
     <div class="login-page">
         <div class="login-box">
+            
                 <el-carousel height="540px" class="carousel hidden-xs-only" autoplay="false">
                     <el-carousel-item v-for="item in 4" :key="item">
                         <el-image :key="item" style="width: 400px;height:540px;"

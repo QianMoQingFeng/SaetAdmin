@@ -311,17 +311,6 @@
 </template>
 {component is="st-contextmenu"/}
 <script>
-console.log(Object.values(document.styleSheets));
-let remix = Object.values(document.styleSheets).find((item) => item.href.indexOf('remixicon') >= 0)
-console.log(remix);
-remix.cssRules.forEach(element => {
-
-});
-// setTimeout(() => {
-//     console.log(Object.values(document.styleSheets).find((item) => item.href.indexOf('remix') >= -1));
-// }, 0);
-// console.log(document.styleSheets.find((a)=> a.href ==1));
-// console.log(document.styleSheets.find((item) => item.href.indexOf('remix') >= -1));
 SaetComponent(
     {
         name: 'st-table',

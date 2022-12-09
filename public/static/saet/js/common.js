@@ -84,26 +84,29 @@ const useSaetVue = (isClearTemp) => {
         initmenu(el, binding)
       }
     })
-
-
-
+  
+   
+    window.RemixIcons = localStorage.getItem('RemixIcons') ? St.string(localStorage.getItem('RemixIcons')).parseCSV(',', null) : [];
     // 注册 remixicon
-    if (remixClass = Object.values(document.styleSheets).find((item) => item.href.indexOf('remixicon') >= 0)) {
-      var REMIXICON = localStorage.getItem('REMIXICON') ? St.string(localStorage.getItem('REMIXICON')).parseCSV(',', null) : []
-      if (REMIXICON.length == 0) {
+    let remixClass = Object.values(document.styleSheets).find((item) => item.href.indexOf('remixicon') >= 0)
+    if (remixClass) {
+      if (RemixIcons.length == 0) {
+        let arr = []
         remixClass.cssRules.forEach(css => {
           let s = css.selectorText;
           if (s && (r = s.match('ri-.*(?=::before)'))) {
-            REMIXICON.push(r[0])
+            arr.push(r[0])
           }
         });
-        localStorage.setItem('REMIXICON', REMIXICON)
+        window.RemixIcons = arr
+        localStorage.setItem('RemixIcons', RemixIcons)
       }
-      for (let index = 0; index < REMIXICON.length; index++) {
-        const icon = REMIXICON[index];
+      for (let index = 0; index < RemixIcons.length; index++) {
+        const icon = RemixIcons[index];
         app.component(icon, { template: `<i class="${icon}"/>` })
       }
     }
+
 
     // 注册 ElementPlusIconsVue
     for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -118,6 +121,7 @@ const useSaetVue = (isClearTemp) => {
     app.mount("#saetApp");
 
   }
+
 
   if (isClearTemp === true) {
     var templates = document.getElementsByTagName('template');
